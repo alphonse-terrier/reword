@@ -55,7 +55,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func runReformulation(presetID: UUID?) {
         guard let preset = (presetID.flatMap { id in settings.presets.first { $0.id == id } }) ?? settings.activePreset else {
-            notify(title: "Reword", body: "Aucun preset configuré. Ouvre les réglages.")
+            notify(title: "Reword", body: String(localized: "No preset configured. Open settings."))
             return
         }
 
@@ -67,10 +67,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 let selected = try await TextReplacer.captureSelectedText()
                 let apiKey = SettingsStore.loadAPIKey()
                 let provider = settings.makeProvider(apiKey: apiKey)
-                let result = try await provider.reformulate(text: selected, systemPrompt: preset.systemPrompt)
+                let languageInstruction = settings.languageInstruction.trimmingCharacters(in: .whitespacesAndNewlines)
+                let systemPrompt = languageInstruction.isEmpty
+                    ? preset.systemPrompt
+                    : languageInstruction + "\n\n" + preset.systemPrompt
+                let result = try await provider.reformulate(text: selected, systemPrompt: systemPrompt)
                 try await TextReplacer.replaceSelection(with: result, restoreOriginal: settings.restorePasteboard)
             } catch {
-                notify(title: "Échec de la reformulation", body: error.localizedDescription)
+                notify(title: String(localized: "Rephrasing failed"), body: error.localizedDescription)
             }
         }
     }
@@ -79,6 +83,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
+        content.sound = nil
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
     }

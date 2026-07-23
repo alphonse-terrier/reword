@@ -37,7 +37,7 @@ final class MenuBarController: NSObject {
         let menu = NSMenu()
 
         if settings.presets.isEmpty {
-            let empty = NSMenuItem(title: "Aucun preset — ouvre les réglages", action: nil, keyEquivalent: "")
+            let empty = NSMenuItem(title: String(localized: "No presets — open settings"), action: nil, keyEquivalent: "")
             empty.isEnabled = false
             menu.addItem(empty)
         } else {
@@ -52,13 +52,13 @@ final class MenuBarController: NSObject {
 
         menu.addItem(.separator())
 
-        let settingsItem = NSMenuItem(title: "Réglages…", action: #selector(openSettings), keyEquivalent: ",")
+        let settingsItem = NSMenuItem(title: String(localized: "Settings…"), action: #selector(openSettings), keyEquivalent: ",")
         settingsItem.target = self
         menu.addItem(settingsItem)
 
         if !AccessibilityPermission.isTrusted {
             let accessibilityItem = NSMenuItem(
-                title: "Autoriser l'accessibilité…",
+                title: String(localized: "Allow Accessibility…"),
                 action: #selector(requestAccessibility),
                 keyEquivalent: ""
             )
@@ -68,7 +68,7 @@ final class MenuBarController: NSObject {
 
         menu.addItem(.separator())
 
-        let quitItem = NSMenuItem(title: "Quitter Reword", action: #selector(quit), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: String(localized: "Quit Reword"), action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
 

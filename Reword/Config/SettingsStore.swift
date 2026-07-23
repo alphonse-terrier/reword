@@ -17,6 +17,7 @@ enum SettingsStore {
         var presets: [Preset]
         var activePresetID: UUID?
         var restorePasteboard: Bool
+        var languageInstruction: String?
     }
 
     static func load(into settings: AppSettings) {
@@ -31,6 +32,7 @@ enum SettingsStore {
         settings.presets = snapshot.presets.isEmpty ? Preset.defaults : snapshot.presets
         settings.activePresetID = snapshot.activePresetID ?? settings.presets.first?.id
         settings.restorePasteboard = snapshot.restorePasteboard
+        settings.languageInstruction = snapshot.languageInstruction ?? AppSettings.defaultLanguageInstruction
     }
 
     static func save(_ settings: AppSettings) {
@@ -40,7 +42,8 @@ enum SettingsStore {
             model: settings.model,
             presets: settings.presets,
             activePresetID: settings.activePresetID,
-            restorePasteboard: settings.restorePasteboard
+            restorePasteboard: settings.restorePasteboard,
+            languageInstruction: settings.languageInstruction
         )
         guard let data = try? JSONEncoder().encode(snapshot) else { return }
         UserDefaults.standard.set(data, forKey: defaultsKey)

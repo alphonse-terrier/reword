@@ -11,7 +11,7 @@ struct ProviderSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Fournisseur") {
+            Section("Provider") {
                 Picker("Type", selection: $settings.providerType) {
                     ForEach(ProviderType.allCases) { type in
                         Text(type.displayName).tag(type)
@@ -21,24 +21,45 @@ struct ProviderSettingsView: View {
                     settings.resetBaseURLAndModelToDefaults()
                 }
 
-                TextField(settings.providerType == .ollama ? "Host" : "Base URL", text: $settings.baseURL)
-                    .textFieldStyle(.roundedBorder)
+                if settings.providerType == .ollama {
+                    TextField("Host", text: $settings.baseURL)
+                        .textFieldStyle(.roundedBorder)
+                } else if settings.providerType != .claudeCLI {
+                    TextField("Base URL", text: $settings.baseURL)
+                        .textFieldStyle(.roundedBorder)
+                }
 
-                if settings.providerType != .ollama {
-                    SecureField("Clé API", text: $apiKey)
+                if settings.providerType != .ollama && settings.providerType != .claudeCLI {
+                    SecureField("API Key", text: $apiKey)
                         .textFieldStyle(.roundedBorder)
                         .onChange(of: apiKey) { _, newValue in
                             SettingsStore.saveAPIKey(newValue)
                         }
                 }
 
-                TextField("Modèle", text: $settings.model)
-                    .textFieldStyle(.roundedBorder)
+                switch settings.providerType {
+                case .anthropic:
+                    Picker("Model", selection: $settings.model) {
+                        ForEach(ClaudeModels.apiChoices) { choice in
+                            Text(choice.label).tag(choice.id)
+                        }
+                    }
+                case .claudeCLI:
+                    Picker("Model", selection: $settings.model) {
+                        Text("CLI default").tag("")
+                        ForEach(ClaudeModels.cliChoices) { choice in
+                            Text(choice.label).tag(choice.id)
+                        }
+                    }
+                case .openAICompatible, .ollama:
+                    TextField("Model", text: $settings.model)
+                        .textFieldStyle(.roundedBorder)
+                }
             }
 
             Section {
                 HStack {
-                    Button("Tester la connexion") { testConnection() }
+                    Button("Test Connection") { testConnection() }
                         .disabled(testState == .testing)
 
                     switch testState {
@@ -63,8 +84,8 @@ struct ProviderSettingsView: View {
         Task {
             do {
                 _ = try await provider.reformulate(
-                    text: "Ceci est un test.",
-                    systemPrompt: "Réponds uniquement par le mot OK."
+                    text: "This is a test.",
+                    systemPrompt: "Reply with only the word OK."
                 )
                 testState = .success
             } catch {

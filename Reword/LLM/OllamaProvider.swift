@@ -8,7 +8,7 @@ struct OllamaProvider: LLMProvider {
 
     func reformulate(text: String, systemPrompt: String) async throws -> String {
         guard let url = URL(string: normalizedURL()) else {
-            throw LLMError.invalidResponse("Host invalide : \(host)")
+            throw LLMError.invalidResponse(String(localized: "Invalid host:") + " \(host)")
         }
 
         var request = URLRequest(url: url)
@@ -33,7 +33,7 @@ struct OllamaProvider: LLMProvider {
         }
 
         if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
-            let bodyText = String(data: data, encoding: .utf8) ?? "<binaire>"
+            let bodyText = String(data: data, encoding: .utf8) ?? String(localized: "<binary>")
             throw LLMError.httpError(http.statusCode, bodyText)
         }
 
@@ -42,7 +42,7 @@ struct OllamaProvider: LLMProvider {
             let message = json["message"] as? [String: Any],
             let content = message["content"] as? String
         else {
-            throw LLMError.invalidResponse(String(data: data, encoding: .utf8) ?? "réponse illisible")
+            throw LLMError.invalidResponse(String(data: data, encoding: .utf8) ?? String(localized: "unreadable response"))
         }
 
         let result = cleaned(content)

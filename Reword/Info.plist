@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>en</string>
 	<key>CFBundleDisplayName</key>
 	<string>Reword</string>
 	<key>CFBundleExecutable</key>
@@ -23,7 +23,7 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>Reword a besoin d'envoyer des raccourcis clavier (copier/coller) à l'application active pour reformuler le texte sélectionné.</string>
+	<string>Reword needs to send keyboard shortcuts (copy/paste) to the frontmost app to rephrase the selected text.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>© 2026 Alphonse Terrier</string>
 </dict>

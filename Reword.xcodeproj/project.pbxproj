@@ -10,9 +10,11 @@
 		0088D0AB5EC5CFD667142D4D /* AccessibilityPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC9B895F0C6CD72A30E9ABD /* AccessibilityPermission.swift */; };
 		072ADEBA1F9192513FDE8DE9 /* AnthropicProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68A1E3830275C5180A97407 /* AnthropicProvider.swift */; };
 		14B08FB5434E14D2668F942A /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09ECDBC6CB579040A6123D75 /* MenuBarController.swift */; };
+		246C2BD54558387122C0C57F /* ClaudeCLIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED961761A0C7BC568A8C403E /* ClaudeCLIProvider.swift */; };
 		2960991789B74467905B3EA3 /* OpenAICompatibleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0823ABDA872E12C429B123 /* OpenAICompatibleProvider.swift */; };
 		2B7507CD062B09D648B5342B /* ProviderSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E6E5027F9B2E442FE5841B /* ProviderSettingsView.swift */; };
 		39347B36DE4D7CAF49B00DB5 /* PresetsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FDC784C1E7ECA9A20FFC44 /* PresetsSettingsView.swift */; };
+		5C4F584B8A47425455D1A769 /* ClaudeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59A5CF078B0E3A344AE490 /* ClaudeModels.swift */; };
 		66FD984739C6CBF89F3BD300 /* TextReplacer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDE91DB6D900280927F07B6 /* TextReplacer.swift */; };
 		6B594C11409EFF930148EA60 /* LLMProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A16BA21CC3423709F9AAFC5 /* LLMProvider.swift */; };
 		736F0D6216F1EF0D4088B66E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88BD30DCCCF528DDCFFD2B6 /* SettingsView.swift */; };
@@ -27,6 +29,7 @@
 		EC5224AB6868B900CD0449E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B0B932F6603D64A47296A07 /* Assets.xcassets */; };
 		F76B7845A86BBD23CFC6D076 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15BCFE635B0AA2212E9C72A /* SettingsWindowController.swift */; };
 		FCE9AA13DFC37D699E278E9C /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A02FE9F49AE1F48853B0498 /* HotkeyManager.swift */; };
+		FD5D7D383EE16FE189779A75 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8BDE7B4FD6F57F5F9204807D /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +43,9 @@
 		88D14D2DB7E1AC4AD870BDF5 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		8A02FE9F49AE1F48853B0498 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		8A46221A701EF74034F8FD45 /* KeyboardShortcutRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutRow.swift; sourceTree = "<group>"; };
+		8BDE7B4FD6F57F5F9204807D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		99ACBB1995E98464E4008695 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		9F59A5CF078B0E3A344AE490 /* ClaudeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeModels.swift; sourceTree = "<group>"; };
 		A15BCFE635B0AA2212E9C72A /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		A68A1E3830275C5180A97407 /* AnthropicProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnthropicProvider.swift; sourceTree = "<group>"; };
 		A88BD30DCCCF528DDCFFD2B6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -50,6 +55,7 @@
 		E70152C9F6B5DD377768BE49 /* Reword.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Reword.entitlements; sourceTree = "<group>"; };
 		EA1FDB70A5FEBA3133B4BC78 /* RewordApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewordApp.swift; sourceTree = "<group>"; };
 		EB0823ABDA872E12C429B123 /* OpenAICompatibleProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAICompatibleProvider.swift; sourceTree = "<group>"; };
+		ED961761A0C7BC568A8C403E /* ClaudeCLIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeCLIProvider.swift; sourceTree = "<group>"; };
 		F3669D893F400AF5A7E6BC49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FDDE91DB6D900280927F07B6 /* TextReplacer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextReplacer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,6 +76,8 @@
 			isa = PBXGroup;
 			children = (
 				A68A1E3830275C5180A97407 /* AnthropicProvider.swift */,
+				ED961761A0C7BC568A8C403E /* ClaudeCLIProvider.swift */,
+				9F59A5CF078B0E3A344AE490 /* ClaudeModels.swift */,
 				2A16BA21CC3423709F9AAFC5 /* LLMProvider.swift */,
 				0B69BA0020B74698FAA4B8D6 /* OllamaProvider.swift */,
 				EB0823ABDA872E12C429B123 /* OpenAICompatibleProvider.swift */,
@@ -83,6 +91,7 @@
 				0EC4CEA8CBD1EC19CCED0A83 /* AppDelegate.swift */,
 				0B0B932F6603D64A47296A07 /* Assets.xcassets */,
 				F3669D893F400AF5A7E6BC49 /* Info.plist */,
+				8BDE7B4FD6F57F5F9204807D /* Localizable.xcstrings */,
 				09ECDBC6CB579040A6123D75 /* MenuBarController.swift */,
 				E70152C9F6B5DD377768BE49 /* Reword.entitlements */,
 				EA1FDB70A5FEBA3133B4BC78 /* RewordApp.swift */,
@@ -185,6 +194,7 @@
 			knownRegions = (
 				Base,
 				en,
+				fr,
 			);
 			mainGroup = 5DC5D445BCE7B2A2423E43A8;
 			minimizedProjectReferenceProxies = 1;
@@ -207,6 +217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC5224AB6868B900CD0449E2 /* Assets.xcassets in Resources */,
+				FD5D7D383EE16FE189779A75 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,6 +232,8 @@
 				072ADEBA1F9192513FDE8DE9 /* AnthropicProvider.swift in Sources */,
 				E579A221FBD6A041B7EEEDEE /* AppDelegate.swift in Sources */,
 				D8B0D4E279F470F5E5CA90D9 /* AppSettings.swift in Sources */,
+				246C2BD54558387122C0C57F /* ClaudeCLIProvider.swift in Sources */,
+				5C4F584B8A47425455D1A769 /* ClaudeModels.swift in Sources */,
 				FCE9AA13DFC37D699E278E9C /* HotkeyManager.swift in Sources */,
 				A9AE883320D13101EB0440DA /* KeyboardShortcutRow.swift in Sources */,
 				6B594C11409EFF930148EA60 /* LLMProvider.swift in Sources */,
@@ -292,7 +305,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -318,7 +331,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.polyconseil.alphonse.Reword;
 				SDKROOT = macosx;
@@ -340,7 +353,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.polyconseil.alphonse.Reword;
 				SDKROOT = macosx;
@@ -393,7 +406,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

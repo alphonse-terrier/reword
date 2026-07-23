@@ -2,8 +2,9 @@ name: Reword
 options:
   bundleIdPrefix: com.polyconseil.alphonse
   deploymentTarget:
-    macOS: "13.0"
+    macOS: "14.0"
   createIntermediateGroups: true
+  developmentLanguage: en
 
 packages:
   KeyboardShortcuts:
@@ -14,7 +15,7 @@ targets:
   Reword:
     type: application
     platform: macOS
-    deploymentTarget: "13.0"
+    deploymentTarget: "14.0"
     sources:
       - path: Reword
     info:
@@ -24,7 +25,8 @@ targets:
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "1"
         LSUIElement: true
-        NSAppleEventsUsageDescription: "Reword a besoin d'envoyer des raccourcis clavier (copier/coller) à l'application active pour reformuler le texte sélectionné."
+        NSAppleEventsUsageDescription: "Reword needs to send keyboard shortcuts (copy/paste) to the frontmost app to rephrase the selected text."
+        CFBundleDevelopmentRegion: en
         NSHumanReadableCopyright: "© 2026 Alphonse Terrier"
     entitlements:
       path: Reword/Reword.entitlements

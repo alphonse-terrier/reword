@@ -10,7 +10,7 @@ struct AnthropicProvider: LLMProvider {
 
     func reformulate(text: String, systemPrompt: String) async throws -> String {
         guard let url = URL(string: normalizedURL()) else {
-            throw LLMError.invalidResponse("Base URL invalide : \(baseURL)")
+            throw LLMError.invalidResponse(String(localized: "Invalid base URL:") + " \(baseURL)")
         }
 
         var request = URLRequest(url: url)
@@ -38,7 +38,7 @@ struct AnthropicProvider: LLMProvider {
         }
 
         if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
-            let bodyText = String(data: data, encoding: .utf8) ?? "<binaire>"
+            let bodyText = String(data: data, encoding: .utf8) ?? String(localized: "<binary>")
             throw LLMError.httpError(http.statusCode, bodyText)
         }
 
@@ -48,7 +48,7 @@ struct AnthropicProvider: LLMProvider {
             let firstText = contentBlocks.first(where: { $0["type"] as? String == "text" }),
             let text = firstText["text"] as? String
         else {
-            throw LLMError.invalidResponse(String(data: data, encoding: .utf8) ?? "réponse illisible")
+            throw LLMError.invalidResponse(String(data: data, encoding: .utf8) ?? String(localized: "unreadable response"))
         }
 
         let result = cleaned(text)

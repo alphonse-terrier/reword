@@ -31,7 +31,7 @@ struct PresetsSettingsView: View {
                 presetEditor(index: index)
                     .padding()
             } else {
-                Text("Sélectionne ou crée un preset")
+                Text("Select or create a preset")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -44,22 +44,22 @@ struct PresetsSettingsView: View {
     @ViewBuilder
     private func presetEditor(index: Int) -> some View {
         Form {
-            Section("Nom") {
-                TextField("Nom du preset", text: $settings.presets[index].name)
+            Section("Name") {
+                TextField("Preset name", text: $settings.presets[index].name)
                     .textFieldStyle(.roundedBorder)
             }
 
-            Section("Prompt système") {
+            Section("System Prompt") {
                 TextEditor(text: $settings.presets[index].systemPrompt)
                     .frame(minHeight: 140)
                     .font(.body)
                     .overlay(RoundedRectangle(cornerRadius: 6).stroke(.separator))
             }
 
-            Section("Raccourci dédié (optionnel)") {
+            Section("Dedicated Shortcut (optional)") {
                 KeyboardShortcutRow(
                     name: .forPreset(settings.presets[index].id),
-                    label: "Appliquer directement ce preset"
+                    label: "Apply this preset directly"
                 )
             }
         }
@@ -67,7 +67,7 @@ struct PresetsSettingsView: View {
     }
 
     private func addPreset() {
-        let preset = Preset(name: "Nouveau preset", systemPrompt: "Reformule le texte suivant.")
+        let preset = Preset(name: "New preset", systemPrompt: "Rephrase the following text.")
         settings.presets.append(preset)
         selectedPresetID = preset.id
     }

@@ -5,14 +5,16 @@ enum ProviderType: String, Codable, CaseIterable, Identifiable {
     case openAICompatible
     case anthropic
     case ollama
+    case claudeCLI
 
     var id: String { rawValue }
 
     var displayName: String {
         switch self {
-        case .openAICompatible: return "API OpenAI-compatible"
-        case .anthropic: return "Anthropic (Claude)"
-        case .ollama: return "Ollama natif"
+        case .openAICompatible: return String(localized: "OpenAI-compatible API")
+        case .anthropic: return String(localized: "Anthropic (Claude)")
+        case .ollama: return String(localized: "Ollama (native)")
+        case .claudeCLI: return String(localized: "Claude CLI (claude -p)")
         }
     }
 
@@ -21,6 +23,7 @@ enum ProviderType: String, Codable, CaseIterable, Identifiable {
         case .openAICompatible: return "https://api.openai.com/v1"
         case .anthropic: return "https://api.anthropic.com"
         case .ollama: return "http://localhost:11434"
+        case .claudeCLI: return ""
         }
     }
 
@@ -29,6 +32,7 @@ enum ProviderType: String, Codable, CaseIterable, Identifiable {
         case .openAICompatible: return "gpt-4o-mini"
         case .anthropic: return "claude-sonnet-5"
         case .ollama: return "llama3"
+        case .claudeCLI: return "haiku"
         }
     }
 }
@@ -42,13 +46,13 @@ enum LLMError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .emptyResponse:
-            return "Le modèle n'a renvoyé aucun texte."
+            return String(localized: "The model returned no text.")
         case .invalidResponse(let detail):
-            return "Réponse invalide du fournisseur : \(detail)"
+            return String(localized: "Invalid response from provider:") + " \(detail)"
         case .httpError(let code, let body):
-            return "Erreur HTTP \(code) : \(body)"
+            return String(localized: "HTTP error") + " \(code): \(body)"
         case .network(let error):
-            return "Erreur réseau : \(error.localizedDescription)"
+            return String(localized: "Network error:") + " \(error.localizedDescription)"
         }
     }
 }

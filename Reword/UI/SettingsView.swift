@@ -6,13 +6,13 @@ struct SettingsView: View {
     var body: some View {
         TabView {
             ProviderSettingsView(settings: settings)
-                .tabItem { Label("Fournisseur", systemImage: "cpu") }
+                .tabItem { Label("Provider", systemImage: "cpu") }
 
             PresetsSettingsView(settings: settings)
                 .tabItem { Label("Presets", systemImage: "list.bullet") }
 
             GeneralSettingsView(settings: settings)
-                .tabItem { Label("Général", systemImage: "gearshape") }
+                .tabItem { Label("General", systemImage: "gearshape") }
         }
         .padding(20)
         .frame(width: 560, height: 420)
@@ -24,17 +24,28 @@ private struct GeneralSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Raccourci global") {
+            Section("Global Shortcut") {
                 KeyboardShortcutRow(
                     name: .reformulateDefault,
-                    label: "Reformuler avec le preset actif"
+                    label: "Rephrase with the active preset"
                 )
             }
 
-            Section("Presse-papiers") {
-                Toggle("Restaurer le presse-papiers après remplacement", isOn: $settings.restorePasteboard)
+            Section("Clipboard") {
+                Toggle("Restore clipboard after replacement", isOn: $settings.restorePasteboard)
+            }
+
+            Section("Language") {
+                TextEditor(text: $settings.languageInstruction)
+                    .frame(minHeight: 80)
+                    .font(.body)
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(.separator))
+                Text("Applied before every preset's system prompt.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
+        .onDisappear { SettingsStore.save(settings) }
     }
 }

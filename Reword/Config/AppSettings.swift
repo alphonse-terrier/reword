@@ -17,6 +17,11 @@ final class AppSettings {
     /// Whether to restore the user's previous pasteboard contents after pasting the result.
     var restorePasteboard: Bool = true
 
+    /// Prepended to every preset's system prompt, e.g. to keep replies in the input's language.
+    var languageInstruction: String = AppSettings.defaultLanguageInstruction
+
+    static let defaultLanguageInstruction = "Keep the original language of the input text in your reply, unless explicitly asked to translate or use a different language."
+
     init() {
         activePresetID = presets.first?.id
     }
@@ -38,6 +43,9 @@ final class AppSettings {
             return AnthropicProvider(baseURL: baseURL, apiKey: apiKey, model: model)
         case .ollama:
             return OllamaProvider(host: baseURL, model: model)
+        case .claudeCLI:
+            let trimmedModel = model.trimmingCharacters(in: .whitespacesAndNewlines)
+            return ClaudeCLIProvider(model: trimmedModel.isEmpty ? ProviderType.claudeCLI.defaultModel : trimmedModel)
         }
     }
 }

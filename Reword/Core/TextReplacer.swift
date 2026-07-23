@@ -12,9 +12,9 @@ enum TextReplacer {
         var errorDescription: String? {
             switch self {
             case .noSelection:
-                return "Aucun texte sélectionné."
+                return String(localized: "No text selected.")
             case .accessibilityNotTrusted:
-                return "Reword n'a pas la permission Accessibilité. Autorise-la dans Réglages Système."
+                return String(localized: "Reword doesn't have Accessibility permission. Grant it in System Settings.")
             }
         }
     }
