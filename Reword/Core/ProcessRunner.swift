@@ -28,25 +28,46 @@ enum ProcessRunnerError: LocalizedError {
 /// - stdin is written with the throwing `write(contentsOf:)`, not the non-throwing
 ///   `write(_:)`, so a broken pipe (child exits early) surfaces as a normal Swift error
 ///   instead of an uncatchable Objective-C exception that crashes the app;
+/// - the result is only produced once stdout AND stderr have both signaled EOF *and* the
+///   process has terminated — not as soon as `terminationHandler` fires, which races with
+///   `readabilityHandler` on fast-exiting processes and can drop trailing output;
 /// - a hard timeout terminates a stuck process instead of hanging the caller forever;
 /// - cancelling the enclosing `Task` terminates the process too.
 enum ProcessRunner {
-    private final class OutputBox: @unchecked Sendable {
+    private final class Completion: @unchecked Sendable {
         private let lock = NSLock()
         private var stdoutData = Data()
         private var stderrData = Data()
+        private var stdoutDone = false
+        private var stderrDone = false
+        private var terminationStatus: Int32?
         private var timedOut = false
+        private var settled = false
 
         func appendStdout(_ data: Data) { lock.withLock { stdoutData.append(data) } }
         func appendStderr(_ data: Data) { lock.withLock { stderrData.append(data) } }
         func markTimedOut() { lock.withLock { timedOut = true } }
 
-        func snapshot() -> (stdout: String, stderr: String, timedOut: Bool) {
+        /// Each `mark*` returns `true` exactly once — the first call that observes all three
+        /// conditions satisfied — so the caller knows precisely when to resume, regardless of
+        /// the (unpredictable) order stdout EOF, stderr EOF, and process termination arrive in.
+        func markStdoutDone() -> Bool { lock.withLock { stdoutDone = true; return settleIfReadyLocked() } }
+        func markStderrDone() -> Bool { lock.withLock { stderrDone = true; return settleIfReadyLocked() } }
+        func markTerminated(_ status: Int32) -> Bool { lock.withLock { terminationStatus = status; return settleIfReadyLocked() } }
+
+        private func settleIfReadyLocked() -> Bool {
+            guard !settled, stdoutDone, stderrDone, terminationStatus != nil else { return false }
+            settled = true
+            return true
+        }
+
+        func snapshot() -> (stdout: String, stderr: String, timedOut: Bool, status: Int32) {
             lock.withLock {
                 (
                     String(data: stdoutData, encoding: .utf8) ?? "",
                     String(data: stderrData, encoding: .utf8) ?? "",
-                    timedOut
+                    timedOut,
+                    terminationStatus ?? -1
                 )
             }
         }
@@ -78,40 +99,55 @@ enum ProcessRunner {
         process.standardOutput = stdoutPipe
         process.standardError = stderrPipe
 
-        let box = OutputBox()
-        stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
-            let data = handle.availableData
-            if !data.isEmpty { box.appendStdout(data) }
-        }
-        stderrPipe.fileHandleForReading.readabilityHandler = { handle in
-            let data = handle.availableData
-            if !data.isEmpty { box.appendStderr(data) }
-        }
-
         return try await withTaskCancellationHandler(
             operation: {
                 try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<String, Error>) in
+                    let completion = Completion()
+
+                    func finish() {
+                        let (stdout, stderr, timedOut, status) = completion.snapshot()
+                        if timedOut {
+                            continuation.resume(throwing: ProcessRunnerError.timedOut)
+                        } else if status != 0 {
+                            let trimmedStderr = stderr.trimmingCharacters(in: .whitespacesAndNewlines)
+                            let detail = trimmedStderr.isEmpty ? stdout : trimmedStderr
+                            continuation.resume(throwing: ProcessRunnerError.nonZeroExit(status: status, output: detail))
+                        } else {
+                            continuation.resume(returning: stdout)
+                        }
+                    }
+
+                    // Empty `availableData` is FileHandle's documented EOF signal (the pipe's
+                    // write end closed) — waiting for it, rather than just `terminationHandler`,
+                    // is what avoids dropping output from processes that exit very quickly.
+                    stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
+                        let data = handle.availableData
+                        if data.isEmpty {
+                            handle.readabilityHandler = nil
+                            if completion.markStdoutDone() { finish() }
+                        } else {
+                            completion.appendStdout(data)
+                        }
+                    }
+                    stderrPipe.fileHandleForReading.readabilityHandler = { handle in
+                        let data = handle.availableData
+                        if data.isEmpty {
+                            handle.readabilityHandler = nil
+                            if completion.markStderrDone() { finish() }
+                        } else {
+                            completion.appendStderr(data)
+                        }
+                    }
+
                     let timeoutItem = DispatchWorkItem {
-                        box.markTimedOut()
+                        completion.markTimedOut()
                         if process.isRunning { process.terminate() }
                     }
                     DispatchQueue.global().asyncAfter(deadline: .now() + timeout, execute: timeoutItem)
 
                     process.terminationHandler = { finished in
                         timeoutItem.cancel()
-                        stdoutPipe.fileHandleForReading.readabilityHandler = nil
-                        stderrPipe.fileHandleForReading.readabilityHandler = nil
-                        let (stdout, stderr, timedOut) = box.snapshot()
-
-                        if timedOut {
-                            continuation.resume(throwing: ProcessRunnerError.timedOut)
-                        } else if finished.terminationStatus != 0 {
-                            let trimmedStderr = stderr.trimmingCharacters(in: .whitespacesAndNewlines)
-                            let detail = trimmedStderr.isEmpty ? stdout : trimmedStderr
-                            continuation.resume(throwing: ProcessRunnerError.nonZeroExit(status: finished.terminationStatus, output: detail))
-                        } else {
-                            continuation.resume(returning: stdout)
-                        }
+                        if completion.markTerminated(finished.terminationStatus) { finish() }
                     }
 
                     do {

@@ -107,6 +107,22 @@ To build a distributable `.app` + `.dmg` in one step:
 scripts/build-dmg.sh
 ```
 
+### Keeping macOS permissions across rebuilds
+
+Without a paid Developer ID, local builds are signed ad-hoc by default — and ad-hoc signatures
+are derived from the binary's own hash, so **every rebuild looks like a different app to macOS**,
+silently revoking the Accessibility permission each time. If you're iterating on the source and
+don't want to re-grant Accessibility after every build, create a stable local signing identity
+once:
+
+```sh
+scripts/create-local-signing-identity.sh
+```
+
+`scripts/build-dmg.sh` automatically detects and uses it afterwards. It's a self-signed
+certificate stored in your login keychain — nothing is uploaded anywhere, and it doesn't need to
+be trusted by anyone else's Mac, only consistent on yours.
+
 ### Running the tests
 
 ```sh
