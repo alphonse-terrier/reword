@@ -211,16 +211,6 @@
         }
       }
     },
-    "Model (optional — CLI default)" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Modèle (optionnel — défaut CLI)"
-          }
-        }
-      }
-    },
     "Name" : {
       "localizations" : {
         "fr" : {
@@ -457,6 +447,316 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "réponse illisible"
+          }
+        }
+      }
+    },
+    "Add preset" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter un preset"
+          }
+        }
+      }
+    },
+    "Arguments" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arguments"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler"
+          }
+        }
+      }
+    },
+    "Command" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commande"
+          }
+        }
+      }
+    },
+    "Command exited with status" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La commande s'est terminée avec le statut"
+          }
+        }
+      }
+    },
+    "Couldn't launch process:" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de lancer le processus :"
+          }
+        }
+      }
+    },
+    "Couldn't synthesize the keyboard shortcut needed to copy/paste." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de simuler le raccourci clavier nécessaire pour copier/coller."
+          }
+        }
+      }
+    },
+    "Custom Command" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commande personnalisée"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer"
+          }
+        }
+      }
+    },
+    "Delete preset?" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer ce preset ?"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminé"
+          }
+        }
+      }
+    },
+    "Enter a model name." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renseigne un nom de modèle."
+          }
+        }
+      }
+    },
+    "Enter a valid http(s) URL." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renseigne une URL http(s) valide."
+          }
+        }
+      }
+    },
+    "Enter the command to run, e.g. \"claude\" or \"ollama\"." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renseigne la commande à lancer, ex. « claude » ou « ollama »."
+          }
+        }
+      }
+    },
+    "Executable not found:" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exécutable introuvable :"
+          }
+        }
+      }
+    },
+    "Give this preset a name so it's recognizable in the menu." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donne un nom à ce preset pour le reconnaître dans le menu."
+          }
+        }
+      }
+    },
+    "No command configured. Set one in Settings → Provider." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune commande configurée. Renseigne-en une dans Réglages → Fournisseur."
+          }
+        }
+      }
+    },
+    "No instructions — the AI will get no guidance beyond the language instruction, if any." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune instruction — l'IA ne recevra que l'instruction de langue, s'il y en a une."
+          }
+        }
+      }
+    },
+    "Load a Command Preset…" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Charger un preset de commande…"
+          }
+        }
+      }
+    },
+    "Remove preset" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer le preset"
+          }
+        }
+      }
+    },
+    "Rephrase Now" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reformuler maintenant"
+          }
+        }
+      }
+    },
+    "Rephrasing…" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reformulation…"
+          }
+        }
+      }
+    },
+    "Reword — idle" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reword — inactif"
+          }
+        }
+      }
+    },
+    "Reword — working" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reword — en cours"
+          }
+        }
+      }
+    },
+    "The command timed out." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La commande a dépassé le délai imparti."
+          }
+        }
+      }
+    },
+    "The focused app changed before the result was ready, so pasting was cancelled." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'application au premier plan a changé avant que le résultat soit prêt, le collage a été annulé."
+          }
+        }
+      }
+    },
+    "The focused element doesn't support direct text access." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'élément actif ne permet pas l'accès direct au texte."
+          }
+        }
+      }
+    },
+    "The request took too long and was cancelled." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La requête a pris trop de temps et a été annulée."
+          }
+        }
+      }
+    },
+    "This can't be undone. Any dedicated shortcut for this preset will stop working." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette action est irréversible. Le raccourci dédié de ce preset, s'il existe, cessera de fonctionner."
+          }
+        }
+      }
+    },
+    "Untitled preset" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preset sans nom"
+          }
+        }
+      }
+    },
+    "Use {system} and {model} as placeholders; the selected text is sent on stdin." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilise {system} et {model} comme repères ; le texte sélectionné est envoyé sur stdin."
           }
         }
       }

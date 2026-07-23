@@ -2,12 +2,21 @@ import AppKit
 import UserNotifications
 
 /// Owns the app's lifecycle: menu bar item, hotkey wiring, and the reformulation pipeline
-/// (capture selection → call LLM → replace selection).
+/// (capture selection → call LLM → replace selection). Confined to the main actor: settings are
+/// read into a `Sendable` `ReformulationRequest` snapshot before any background work starts, and
+/// only one reformulation runs at a time.
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let settings = AppSettings()
     private var menuBarController: MenuBarController!
     private var hotkeyManager: HotkeyManager!
     private var settingsWindowController: SettingsWindowController?
+    private let overlay = StatusOverlayController()
+
+    /// The in-flight reformulation, if any — guards against a second trigger interleaving
+    /// pasteboard/AX writes with the first, and gives "Cancel" something to cancel.
+    private var currentTask: Task<Void, Never>?
+    private var notificationsAuthorized = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         SettingsStore.load(into: settings)
@@ -19,7 +28,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         menuBarController = MenuBarController(
             settings: settings,
+            onSetActivePreset: { [weak self] id in self?.settings.activePresetID = id },
             onReformulate: { [weak self] presetID in self?.runReformulation(presetID: presetID) },
+            onCancel: { [weak self] in self?.cancelCurrentReformulation() },
             onOpenSettings: { [weak self] in self?.showSettings() },
             onRequestAccessibility: {
                 if AccessibilityPermission.isTrusted {
@@ -30,7 +41,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         )
 
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert]) { _, _ in }
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert]) { [weak self] granted, error in
+            if let error {
+                Log.pipeline.error("Notification authorization error: \(error.localizedDescription, privacy: .public)")
+            }
+            Task { @MainActor in self?.notificationsAuthorized = granted }
+        }
 
         if !AccessibilityPermission.isTrusted {
             AccessibilityPermission.requestIfNeeded()
@@ -55,36 +71,81 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func runReformulation(presetID: UUID?) {
         guard let preset = (presetID.flatMap { id in settings.presets.first { $0.id == id } }) ?? settings.activePreset else {
-            notify(title: "Reword", body: String(localized: "No preset configured. Open settings."))
+            report(title: "Reword", body: String(localized: "No preset configured. Open settings."))
             return
         }
 
-        menuBarController.setBusy(true)
+        guard currentTask == nil else {
+            Log.pipeline.notice("Ignoring reformulation trigger — one is already in flight.")
+            return
+        }
 
-        Task {
-            defer { menuBarController.setBusy(false) }
+        let languageInstruction = settings.languageInstruction.trimmingCharacters(in: .whitespacesAndNewlines)
+        let systemPrompt = languageInstruction.isEmpty
+            ? preset.systemPrompt
+            : languageInstruction + "\n\n" + preset.systemPrompt
+
+        let request = ReformulationRequest(
+            providerType: settings.providerType,
+            baseURL: settings.baseURL,
+            model: settings.model,
+            apiKey: SettingsStore.loadAPIKey(for: settings.providerType),
+            commandExecutable: settings.commandExecutable,
+            commandArgumentsLine: settings.commandArgumentsLine,
+            systemPrompt: systemPrompt,
+            restorePasteboard: settings.restorePasteboard
+        )
+
+        menuBarController.setBusy(true)
+        overlay.show(.working)
+
+        currentTask = Task { [weak self] in
+            guard let self else { return }
+            defer {
+                self.menuBarController.setBusy(false)
+                self.currentTask = nil
+            }
             do {
-                let selected = try await TextReplacer.captureSelectedText()
-                let apiKey = SettingsStore.loadAPIKey()
-                let provider = settings.makeProvider(apiKey: apiKey)
-                let languageInstruction = settings.languageInstruction.trimmingCharacters(in: .whitespacesAndNewlines)
-                let systemPrompt = languageInstruction.isEmpty
-                    ? preset.systemPrompt
-                    : languageInstruction + "\n\n" + preset.systemPrompt
-                let result = try await provider.reformulate(text: selected, systemPrompt: systemPrompt)
-                try await TextReplacer.replaceSelection(with: result, restoreOriginal: settings.restorePasteboard)
+                let (selected, session) = try await TextReplacer.captureSelectedText()
+                let provider = request.makeProvider()
+                let result = try await withTimeout(seconds: 45) {
+                    try await provider.reformulate(text: selected, systemPrompt: request.systemPrompt)
+                }
+                try await TextReplacer.replaceSelection(session, with: result, restoreOriginal: request.restorePasteboard)
+                self.overlay.show(.success)
+            } catch is CancellationError {
+                Log.pipeline.notice("Reformulation cancelled.")
+                self.overlay.hide()
             } catch {
-                notify(title: String(localized: "Rephrasing failed"), body: error.localizedDescription)
+                Log.pipeline.error("Reformulation failed: \(error.localizedDescription, privacy: .public)")
+                self.overlay.show(.failure(error.localizedDescription))
+                self.report(title: String(localized: "Rephrasing failed"), body: error.localizedDescription)
             }
         }
     }
 
-    private func notify(title: String, body: String) {
+    /// Cancels the in-flight reformulation, if any — wired to the menu's "Cancel" item.
+    private func cancelCurrentReformulation() {
+        currentTask?.cancel()
+    }
+
+    /// Surfaces an error/status message. The floating overlay is the primary channel; this adds
+    /// a system notification only when the user has actually granted permission for it, so a
+    /// denied/ignored authorization request doesn't silently swallow every error.
+    private func report(title: String, body: String) {
+        guard notificationsAuthorized else {
+            Log.pipeline.notice("\(title, privacy: .public): \(body, privacy: .public) (notifications not authorized, overlay-only)")
+            return
+        }
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = nil
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error {
+                Log.pipeline.error("Failed to post notification: \(error.localizedDescription, privacy: .public)")
+            }
+        }
     }
 }

@@ -17,12 +17,16 @@ It's your own text assistant, and you're fully in control of which AI powers it.
   Claude CLI login — whatever you already use or trust.
 - **You choose what "reword" means.** Fix spelling, sound more professional, shorten a wall of
   text, translate it — pick from the built-in presets or write your own.
-- **Nothing leaves your clipboard history.** Reword puts the copied text through the AI and
-  restores your clipboard right after, so it's like it was never touched.
+- **Doesn't touch your clipboard, when it can help it.** Reword reads and writes your selection
+  directly through macOS's Accessibility API — no clipboard involved at all in most apps. It only
+  falls back to a (fully restored) clipboard copy/paste for apps that don't support that.
 - **Your keys stay yours.** API keys live in the macOS Keychain, never written to disk in plain
-  text.
+  text, and each provider gets its own key — switching providers never sends the wrong key to the
+  wrong place.
 - **Speaks your language.** English by default, with French included — it follows your Mac's
   per-app language setting.
+- **Tells you what's happening.** A small overlay near your cursor shows progress and success/
+  failure — you're never left wondering if it's working.
 
 ## Getting started
 
@@ -54,8 +58,13 @@ your text.
   - Ollama, if you'd rather run models locally
   - Your local **Claude CLI** login (`claude -p`) — no separate API key needed if you already use
     Claude Code
+  - **Any other CLI** via **Custom Command** — point it at `ollama run`, the Gemini CLI, `llm`, or
+    any script that reads a prompt on stdin and prints a reply; ready-made presets get you started
 - **A language instruction** you can tweak in Settings → General, so the AI keeps replies in
   whatever language you wrote in, unless you're specifically asking it to translate.
+- **Rephrase Now / Cancel** in the menu — trigger a rewrite without memorizing the shortcut, or
+  stop one that's taking too long (there's also a 45-second automatic timeout so a stuck request
+  never leaves you hanging).
 
 ## Configuring your AI provider
 
@@ -67,6 +76,7 @@ Open **Settings** from the menu bar icon → **Provider** tab:
 | Anthropic (Claude) | API key, model (pick from a list) | Talks straight to Anthropic, no middleman |
 | Ollama | Just the host address | No API key — great for running models locally |
 | Claude CLI (`claude -p`) | Nothing but Claude Code installed and logged in | Reuses your existing login |
+| Custom Command | A command + arguments (`{system}`/`{model}` placeholders, text on stdin) | Drives any local LLM CLI; load a ready-made preset and tweak it |
 
 Whichever you pick, hit **Test Connection** afterwards — it sends a tiny test message so you know
 everything's wired up correctly before you rely on it.
@@ -90,6 +100,34 @@ xcodebuild -project Reword.xcodeproj -scheme Reword -configuration Release build
 
 Requires macOS 14 (Sonoma) or later. If you want to use the Claude CLI provider, you'll also need
 the `claude` CLI installed and logged in.
+
+To build a distributable `.app` + `.dmg` in one step:
+
+```sh
+scripts/build-dmg.sh
+```
+
+### Running the tests
+
+```sh
+xcodegen generate
+xcodebuild -project Reword.xcodeproj -scheme Reword -destination "platform=macOS" test
+```
+
+## Under the hood
+
+A few things worth knowing if you're reading the code or hitting an edge case:
+
+- **Text access**: Reword tries the Accessibility API first (no clipboard involved), and only
+  falls back to synthesized ⌘C/⌘V for apps that don't support it. The pasteboard fallback checks
+  that the frontmost app hasn't changed mid-request before pasting, so switching away while the
+  AI is thinking can't send your rewritten text to the wrong window.
+- **One request at a time**: triggering the shortcut while a reformulation is already running is
+  ignored rather than queued or interleaved, so two requests can never race over the same
+  selection. Every request has a 45-second timeout and can be cancelled from the menu.
+- **Custom Command safety**: external processes are run with concurrent stdout/stderr draining
+  (no deadlock on large output), a hard timeout, and cancellation support — a stuck or misbehaving
+  CLI can't hang the app.
 
 ## License
 

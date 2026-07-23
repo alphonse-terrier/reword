@@ -1,11 +1,12 @@
 import Foundation
 
 /// The kind of backend the user has configured. Each case maps to one `LLMProvider` implementation.
-enum ProviderType: String, Codable, CaseIterable, Identifiable {
+enum ProviderType: String, Codable, CaseIterable, Identifiable, Sendable {
     case openAICompatible
     case anthropic
     case ollama
     case claudeCLI
+    case customCommand
 
     var id: String { rawValue }
 
@@ -15,6 +16,7 @@ enum ProviderType: String, Codable, CaseIterable, Identifiable {
         case .anthropic: return String(localized: "Anthropic (Claude)")
         case .ollama: return String(localized: "Ollama (native)")
         case .claudeCLI: return String(localized: "Claude CLI (claude -p)")
+        case .customCommand: return String(localized: "Custom Command")
         }
     }
 
@@ -23,7 +25,7 @@ enum ProviderType: String, Codable, CaseIterable, Identifiable {
         case .openAICompatible: return "https://api.openai.com/v1"
         case .anthropic: return "https://api.anthropic.com"
         case .ollama: return "http://localhost:11434"
-        case .claudeCLI: return ""
+        case .claudeCLI, .customCommand: return ""
         }
     }
 
@@ -33,6 +35,7 @@ enum ProviderType: String, Codable, CaseIterable, Identifiable {
         case .anthropic: return "claude-sonnet-5"
         case .ollama: return "llama3"
         case .claudeCLI: return "haiku"
+        case .customCommand: return ""
         }
     }
 }
@@ -57,8 +60,9 @@ enum LLMError: LocalizedError {
     }
 }
 
-/// Common interface implemented by every LLM backend Reword can talk to.
-protocol LLMProvider {
+/// Common interface implemented by every LLM backend Reword can talk to. `Sendable` so a
+/// provider value built on the main actor can be safely passed into a background `Task`.
+protocol LLMProvider: Sendable {
     /// Sends `text` to the model with `systemPrompt` as instructions and returns the rewritten text.
     func reformulate(text: String, systemPrompt: String) async throws -> String
 }
