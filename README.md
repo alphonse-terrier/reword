@@ -7,10 +7,9 @@
 *No clipboard hassle. No app switching. No context lost.*
 
 [![CI](https://github.com/alphonse-terrier/reword/actions/workflows/ci.yml/badge.svg)](https://github.com/alphonse-terrier/reword/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/alphonse-terrier/reword?label=release&color=blue)](https://github.com/alphonse-terrier/reword/releases/latest)
+[![Download](https://img.shields.io/badge/download-latest%20release-blue)](https://github.com/alphonse-terrier/reword/releases/latest)
 [![Platform](https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?logo=apple)](#getting-started)
 [![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white)](https://swift.org)
-[![Downloads](https://img.shields.io/github/downloads/alphonse-terrier/reword/total?color=success)](https://github.com/alphonse-terrier/reword/releases)
 
 [**Download**](https://github.com/alphonse-terrier/reword/releases/latest) · [Features](#-why-youll-like-it) · [Getting started](#-getting-started) · [Providers](#-bring-your-own-ai) · [Build from source](#-building-it-yourself)
 
