@@ -3,9 +3,9 @@ build/
 DerivedData/
 *.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcuserdata/
-*.xcodeproj/project.xcworkspace/xcshareddata/
+# Package.resolved (kept for reproducible builds — the same dependency versions everywhere,
+# including CI) lives under project.xcworkspace/xcshareddata/swiftpm/, so don't blanket-ignore it.
 .swiftpm/
-*.xcworkspace
 xcuserdata/
 .build/
 *.dmg
