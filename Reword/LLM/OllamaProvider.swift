@@ -18,6 +18,9 @@ struct OllamaProvider: LLMProvider {
         let body: [String: Any] = [
             "model": model,
             "stream": false,
+            // Disables extended "thinking" on hybrid reasoning/non-reasoning models — Reword
+            // only needs the final text, and thinking tokens just slow the reply down.
+            "think": false,
             "messages": [
                 ["role": "system", "content": systemPrompt],
                 ["role": "user", "content": text],

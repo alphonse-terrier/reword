@@ -64,9 +64,18 @@ protocol LLMProvider {
 }
 
 extension LLMProvider {
-    /// Strips common wrapping the model sometimes adds despite instructions (quotes, code fences).
+    /// Strips common wrapping the model sometimes adds despite instructions (reasoning blocks,
+    /// quotes, code fences).
     func cleaned(_ raw: String) -> String {
         var result = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Some reasoning-capable models emit their chain of thought inline even when asked not
+        // to; strip it rather than pasting it into the user's document.
+        while let range = result.range(of: "<think>[\\s\\S]*?</think>", options: [.regularExpression, .caseInsensitive]) {
+            result.removeSubrange(range)
+        }
+        result = result.trimmingCharacters(in: .whitespacesAndNewlines)
+
         if result.hasPrefix("```") {
             result = result.replacingOccurrences(of: "```", with: "")
                 .trimmingCharacters(in: .whitespacesAndNewlines)
