@@ -450,7 +450,7 @@
 				CODE_SIGN_ENTITLEMENTS = Reword/Reword.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Reword/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -458,7 +458,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.polyconseil.alphonse.Reword;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
@@ -472,7 +472,7 @@
 				CODE_SIGN_ENTITLEMENTS = Reword/Reword.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Reword/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -480,7 +480,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.polyconseil.alphonse.Reword;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;

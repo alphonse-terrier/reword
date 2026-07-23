@@ -30,7 +30,9 @@ It's your own text assistant, and you're fully in control of which AI powers it.
 
 ## Getting started
 
-1. **Grab the app.** Build it from source (see below) — there's no packaged download yet.
+1. **Grab the app.** Download the latest DMG from
+   [Releases](https://github.com/alphonse-terrier/reword/releases/latest), or build it from
+   source (see below).
 2. **Open it once.** Since it isn't notarized by Apple yet, macOS will politely refuse to open it
    the first time. Right-click the app → **Open** to tell macOS you trust it. You'll only need to
    do this once.
@@ -129,6 +131,19 @@ be trusted by anyone else's Mac, only consistent on yours.
 xcodegen generate
 xcodebuild -project Reword.xcodeproj -scheme Reword -destination "platform=macOS" test
 ```
+
+### Cutting a release
+
+Bump `MARKETING_VERSION`/`CFBundleShortVersionString` in `project.yml` if needed, then push a
+matching tag:
+
+```sh
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+`.github/workflows/release.yml` builds the DMG and publishes it to
+[Releases](https://github.com/alphonse-terrier/reword/releases) automatically.
 
 ## Under the hood
 
