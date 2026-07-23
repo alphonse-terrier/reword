@@ -12,7 +12,7 @@ struct ProviderSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Provider") {
+            Section {
                 Picker("Type", selection: $settings.providerType) {
                     ForEach(ProviderType.allCases) { type in
                         Text(type.displayName).tag(type)
@@ -23,27 +23,39 @@ struct ProviderSettingsView: View {
                     reloadAPIKey(for: newValue)
                     testState = .idle
                 }
+            } header: {
+                Text("Provider")
+            } footer: {
+                Text(providerFooter)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
 
-                if settings.providerType == .ollama {
+            if settings.providerType == .ollama {
+                Section("Connection") {
                     TextField("Host", text: $settings.baseURL)
                         .textFieldStyle(.roundedBorder)
-                } else if settings.providerType == .openAICompatible || settings.providerType == .anthropic {
+                        .help("The address Ollama is listening on, e.g. http://localhost:11434.")
+                }
+            } else if settings.providerType == .openAICompatible || settings.providerType == .anthropic {
+                Section("Connection") {
                     TextField("Base URL", text: $settings.baseURL)
                         .textFieldStyle(.roundedBorder)
                     if !isValidHTTPURL(settings.baseURL) {
                         validationWarning("Enter a valid http(s) URL.")
                     }
-                }
 
-                if settings.providerType == .openAICompatible || settings.providerType == .anthropic {
                     SecureField("API Key", text: $apiKey)
                         .textFieldStyle(.roundedBorder)
+                        .help("Stored in the macOS Keychain, separately for each provider.")
                         .onChange(of: apiKey) { _, newValue in
                             SettingsStore.saveAPIKey(newValue, for: settings.providerType)
                         }
                 }
+            }
 
-                if settings.providerType == .customCommand {
+            if settings.providerType == .customCommand {
+                Section {
                     Menu("Load a Command Preset…") {
                         ForEach(CommandPresets.all) { preset in
                             Button(preset.name) { apply(preset) }
@@ -58,11 +70,17 @@ struct ProviderSettingsView: View {
 
                     TextField("Arguments", text: $settings.commandArgumentsLine)
                         .textFieldStyle(.roundedBorder)
+                        .help("{system} and {model} are substituted before launch; the selected text is always sent on stdin.")
+                } header: {
+                    Text("Command")
+                } footer: {
                     Text("Use {system} and {model} as placeholders; the selected text is sent on stdin.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+            }
 
+            Section("Model") {
                 switch settings.providerType {
                 case .anthropic:
                     Picker("Model", selection: $settings.model) {
@@ -70,6 +88,7 @@ struct ProviderSettingsView: View {
                             Text(choice.label).tag(choice.id)
                         }
                     }
+                    .labelsHidden()
                 case .claudeCLI:
                     Picker("Model", selection: $settings.model) {
                         Text("CLI default").tag("")
@@ -77,15 +96,19 @@ struct ProviderSettingsView: View {
                             Text(choice.label).tag(choice.id)
                         }
                     }
+                    .labelsHidden()
+                    .help("\"CLI default\" uses whatever model your Claude Code account is set to.")
                 case .openAICompatible, .ollama:
                     TextField("Model", text: $settings.model)
                         .textFieldStyle(.roundedBorder)
+                        .labelsHidden()
                     if settings.model.trimmingCharacters(in: .whitespaces).isEmpty {
                         validationWarning("Enter a model name.")
                     }
                 case .customCommand:
                     TextField("Model", text: $settings.model)
                         .textFieldStyle(.roundedBorder)
+                        .labelsHidden()
                 }
             }
 
@@ -111,6 +134,16 @@ struct ProviderSettingsView: View {
         .onDisappear {
             SettingsStore.save(settings)
             testTask?.cancel()
+        }
+    }
+
+    private var providerFooter: LocalizedStringKey {
+        switch settings.providerType {
+        case .openAICompatible: return "Works with OpenAI itself, or any server speaking the same chat API — LM Studio, vLLM, OpenRouter, and more."
+        case .anthropic: return "Talks directly to Anthropic's API."
+        case .ollama: return "Talks to a locally running Ollama server — no API key needed."
+        case .claudeCLI: return "Reuses your existing Claude Code login — no separate API key needed."
+        case .customCommand: return "Runs any local command: the selected text goes in on stdin, the reply comes back on stdout."
         }
     }
 

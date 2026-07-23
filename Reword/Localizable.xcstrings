@@ -101,6 +101,136 @@
         }
       }
     },
+    "Connection" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connexion"
+          }
+        }
+      }
+    },
+    "Each preset can also have its own dedicated shortcut — set those in the Presets tab." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque preset peut aussi avoir son propre raccourci dédié — configurable dans l'onglet Presets."
+          }
+        }
+      }
+    },
+    "Only matters when Reword falls back to copy/paste — apps with direct Accessibility support never touch the clipboard." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N'a d'effet que lorsque Reword revient au copier/coller — les apps compatibles avec l'accès direct via l'Accessibilité ne touchent jamais le presse-papiers."
+          }
+        }
+      }
+    },
+    "Reset to Default" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réinitialiser"
+          }
+        }
+      }
+    },
+    "The address Ollama is listening on, e.g. http://localhost:11434." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'adresse sur laquelle Ollama écoute, ex. http://localhost:11434."
+          }
+        }
+      }
+    },
+    "Stored in the macOS Keychain, separately for each provider." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stockée dans le Trousseau macOS, séparément pour chaque fournisseur."
+          }
+        }
+      }
+    },
+    "{system} and {model} are substituted before launch; the selected text is always sent on stdin." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "{system} et {model} sont substitués avant le lancement ; le texte sélectionné est toujours envoyé sur stdin."
+          }
+        }
+      }
+    },
+    "\"CLI default\" uses whatever model your Claude Code account is set to." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "« Défaut CLI » utilise le modèle configuré sur ton compte Claude Code."
+          }
+        }
+      }
+    },
+    "Works with OpenAI itself, or any server speaking the same chat API — LM Studio, vLLM, OpenRouter, and more." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonctionne avec OpenAI lui-même, ou tout serveur parlant la même API de chat — LM Studio, vLLM, OpenRouter, et plus encore."
+          }
+        }
+      }
+    },
+    "Talks directly to Anthropic's API." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Communique directement avec l'API d'Anthropic."
+          }
+        }
+      }
+    },
+    "Talks to a locally running Ollama server — no API key needed." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Communique avec un serveur Ollama local — aucune clé API nécessaire."
+          }
+        }
+      }
+    },
+    "Reuses your existing Claude Code login — no separate API key needed." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réutilise ta connexion Claude Code existante — aucune clé API séparée nécessaire."
+          }
+        }
+      }
+    },
+    "Runs any local command: the selected text goes in on stdin, the reply comes back on stdout." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lance n'importe quelle commande locale : le texte sélectionné entre sur stdin, la réponse ressort sur stdout."
+          }
+        }
+      }
+    },
     "Couldn't find the claude executable in PATH. Make sure Claude Code CLI is installed." : {
       "localizations" : {
         "fr" : {
