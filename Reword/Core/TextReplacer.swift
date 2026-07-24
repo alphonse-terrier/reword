@@ -32,7 +32,7 @@ enum TextReplacer {
     /// should be attempted at all.
     struct Session {
         fileprivate enum Strategy {
-            case editableAX(element: AXUIElement)
+            case editableAX(element: AXUIElement, originalText: String)
             case editablePasteboard(savedItems: [PasteboardTextStrategy.SavedItem], frontmostApp: pid_t?)
             case readOnly
         }
@@ -56,7 +56,7 @@ enum TextReplacer {
             switch try await AXTextStrategy.capture() {
             case .editableAX(let text, let element):
                 Log.textReplace.debug("Captured selection via Accessibility (editable).")
-                return (text, Session(strategy: .editableAX(element: element)))
+                return (text, Session(strategy: .editableAX(element: element, originalText: text)))
             case .editableViaPasteboard(let text):
                 Log.textReplace.debug("Captured selection via Accessibility (editable, but writing back via pasteboard).")
                 let frontmostApp = NSWorkspace.shared.frontmostApplication?.processIdentifier
@@ -92,9 +92,22 @@ enum TextReplacer {
     /// `Session.isReadOnly`), but it's safe if they do.
     static func replaceSelection(_ session: Session, with replacement: String, restoreOriginal: Bool) async throws {
         switch session.strategy {
-        case .editableAX(let element):
-            try AXTextStrategy.replace(element: element, with: replacement)
-            Log.textReplace.debug("Replaced selection via Accessibility.")
+        case .editableAX(let element, let originalText):
+            do {
+                try await AXTextStrategy.replace(element: element, with: replacement, originalText: originalText)
+                Log.textReplace.debug("Replaced selection via Accessibility.")
+            } catch {
+                Log.textReplace.notice("Direct AX write didn't take effect; falling back to pasteboard paste.")
+                let frontmostApp = NSWorkspace.shared.frontmostApplication?.processIdentifier
+                let saved = PasteboardTextStrategy.snapshotForRestore()
+                try await PasteboardTextStrategy.replace(
+                    with: replacement,
+                    savedItems: saved,
+                    restoreOriginal: restoreOriginal,
+                    expectedFrontmostApp: frontmostApp
+                )
+                Log.textReplace.debug("Replaced selection via pasteboard (after AX write fallback).")
+            }
         case .editablePasteboard(let savedItems, let frontmostApp):
             try await PasteboardTextStrategy.replace(
                 with: replacement,

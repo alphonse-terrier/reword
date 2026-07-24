@@ -73,10 +73,27 @@ enum AXTextStrategy {
         return .readOnly(text: trimmed)
     }
 
-    /// Writes `replacement` back into the element captured by `capture()`.
-    static func replace(element: AXUIElement, with replacement: String) throws {
+    /// Writes `replacement` back into the element captured by `capture()`. Some Chromium-based
+    /// apps report `kAXSelectedTextAttribute` as settable and return `.success` from the set
+    /// call, yet silently don't apply it to contenteditable content — so this verifies the write
+    /// actually landed (the selection should no longer equal `originalText`) before declaring
+    /// success, throwing `AXStrategyError.unsupported` otherwise so the caller can fall back to
+    /// a pasteboard paste.
+    static func replace(element: AXUIElement, with replacement: String, originalText: String) async throws {
         let result = AXUIElementSetAttributeValue(element, kAXSelectedTextAttribute as CFString, replacement as CFTypeRef)
         guard result == .success else {
+            throw AXStrategyError.unsupported
+        }
+
+        // Give the app's accessibility tree a moment to reflect the change before checking —
+        // web content in particular can update its AX representation asynchronously.
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        var verifyRef: CFTypeRef?
+        if AXUIElementCopyAttributeValue(element, kAXSelectedTextAttribute as CFString, &verifyRef) == .success,
+           let verifyText = verifyRef as? String,
+           verifyText == originalText {
+            Log.textReplace.notice("AX write reported success but the selection is unchanged — treating as a silent no-op.")
             throw AXStrategyError.unsupported
         }
     }
