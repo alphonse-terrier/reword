@@ -33,4 +33,14 @@ final class CleanedTests: XCTestCase {
     func testLeavesPlainTextUnchanged() {
         XCTAssertEqual(provider.cleaned("just a normal reply"), "just a normal reply")
     }
+
+    func testStripsMarkdownFormatting() {
+        XCTAssertEqual(provider.cleaned("This is **bold** and *italic*."), "This is bold and italic.")
+    }
+
+    func testStripsBoldWrappedQuotes() {
+        // Markdown stripping must run before the surrounding-quote check, or the quotes stay
+        // hidden behind the bold markers and never get stripped.
+        XCTAssertEqual(provider.cleaned("**\"Hello\"**"), "Hello")
+    }
 }

@@ -19,6 +19,7 @@
 		36D3E9D26AA57FDD3AEB7BD0 /* ProcessRunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F58DD9893D00D3515301F4B /* ProcessRunnerTests.swift */; };
 		39347B36DE4D7CAF49B00DB5 /* PresetsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FDC784C1E7ECA9A20FFC44 /* PresetsSettingsView.swift */; };
 		3B167B89D7360DD89B049CFB /* ShellLikeTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BD50193DB4A6734B6FF03E /* ShellLikeTokenizer.swift */; };
+		4176D4DAEEE76FC81A64C659 /* MarkdownStripper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A256958132CA90B7823590E9 /* MarkdownStripper.swift */; };
 		5C4F584B8A47425455D1A769 /* ClaudeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59A5CF078B0E3A344AE490 /* ClaudeModels.swift */; };
 		5F37DC804AD32F2E67857F13 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6078AB73D6AEBFEDA0D5EC0D /* SettingsStoreTests.swift */; };
 		60D80708CE74739BE3FBAF8F /* CommandPresets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8806041565730DA6C9D8BFF /* CommandPresets.swift */; };
@@ -40,6 +41,7 @@
 		BD58EDA19B26004021F3A054 /* ShellLikeTokenizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C402399EE57A9C10BBFA1003 /* ShellLikeTokenizerTests.swift */; };
 		CD1A6D49585144992DCEA766 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 33A8BF8928571B2A292C036F /* KeyboardShortcuts */; };
 		D1E21C76081CA2ADC5B741B2 /* Preset.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC5BC9067643AC9FA51D2D4 /* Preset.swift */; };
+		D840980E2E7EBB248237DC81 /* MarkdownStripperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16079FCFB6A6C0090492370C /* MarkdownStripperTests.swift */; };
 		D8B0D4E279F470F5E5CA90D9 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99ACBB1995E98464E4008695 /* AppSettings.swift */; };
 		E579A221FBD6A041B7EEEDEE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC4CEA8CBD1EC19CCED0A83 /* AppDelegate.swift */; };
 		EC33DE743DC127EBE4956CA2 /* LLMProviderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB0805AD555DBAC82495D7D /* LLMProviderFactory.swift */; };
@@ -68,6 +70,7 @@
 		0B69BA0020B74698FAA4B8D6 /* OllamaProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OllamaProvider.swift; sourceTree = "<group>"; };
 		0CB0805AD555DBAC82495D7D /* LLMProviderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMProviderFactory.swift; sourceTree = "<group>"; };
 		0EC4CEA8CBD1EC19CCED0A83 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		16079FCFB6A6C0090492370C /* MarkdownStripperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStripperTests.swift; sourceTree = "<group>"; };
 		1AE96FBAAC911F8D9F1A26FA /* Concurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Concurrency.swift; sourceTree = "<group>"; };
 		1F58DD9893D00D3515301F4B /* ProcessRunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessRunnerTests.swift; sourceTree = "<group>"; };
 		2A16BA21CC3423709F9AAFC5 /* LLMProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMProvider.swift; sourceTree = "<group>"; };
@@ -87,6 +90,7 @@
 		9F59A5CF078B0E3A344AE490 /* ClaudeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeModels.swift; sourceTree = "<group>"; };
 		A0BD50193DB4A6734B6FF03E /* ShellLikeTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellLikeTokenizer.swift; sourceTree = "<group>"; };
 		A15BCFE635B0AA2212E9C72A /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		A256958132CA90B7823590E9 /* MarkdownStripper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStripper.swift; sourceTree = "<group>"; };
 		A68A1E3830275C5180A97407 /* AnthropicProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnthropicProvider.swift; sourceTree = "<group>"; };
 		A8806041565730DA6C9D8BFF /* CommandPresets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPresets.swift; sourceTree = "<group>"; };
 		A88BD30DCCCF528DDCFFD2B6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -131,6 +135,7 @@
 				6A9C07B798FDD4E97549BB0C /* CommandProvider.swift */,
 				2A16BA21CC3423709F9AAFC5 /* LLMProvider.swift */,
 				0CB0805AD555DBAC82495D7D /* LLMProviderFactory.swift */,
+				A256958132CA90B7823590E9 /* MarkdownStripper.swift */,
 				0B69BA0020B74698FAA4B8D6 /* OllamaProvider.swift */,
 				EB0823ABDA872E12C429B123 /* OpenAICompatibleProvider.swift */,
 			);
@@ -143,6 +148,7 @@
 				9E36D6927B82B6EE64B9B778 /* AXTextStrategyRoleTests.swift */,
 				D80F623652266CDE78C3F920 /* CleanedTests.swift */,
 				95A31E189F313E5DC02B267E /* LLMProviderFactoryTests.swift */,
+				16079FCFB6A6C0090492370C /* MarkdownStripperTests.swift */,
 				1F58DD9893D00D3515301F4B /* ProcessRunnerTests.swift */,
 				6078AB73D6AEBFEDA0D5EC0D /* SettingsStoreTests.swift */,
 				C402399EE57A9C10BBFA1003 /* ShellLikeTokenizerTests.swift */,
@@ -327,6 +333,7 @@
 				7BAC5889CA72468D324E2577 /* AXTextStrategyRoleTests.swift in Sources */,
 				9E1CD131B695D1D72AF24883 /* CleanedTests.swift in Sources */,
 				9E5FC482281E2EBE01E012A5 /* LLMProviderFactoryTests.swift in Sources */,
+				D840980E2E7EBB248237DC81 /* MarkdownStripperTests.swift in Sources */,
 				36D3E9D26AA57FDD3AEB7BD0 /* ProcessRunnerTests.swift in Sources */,
 				5F37DC804AD32F2E67857F13 /* SettingsStoreTests.swift in Sources */,
 				BD58EDA19B26004021F3A054 /* ShellLikeTokenizerTests.swift in Sources */,
@@ -352,6 +359,7 @@
 				6B594C11409EFF930148EA60 /* LLMProvider.swift in Sources */,
 				EC33DE743DC127EBE4956CA2 /* LLMProviderFactory.swift in Sources */,
 				BB7363AE236210DB6C699221 /* Log.swift in Sources */,
+				4176D4DAEEE76FC81A64C659 /* MarkdownStripper.swift in Sources */,
 				14B08FB5434E14D2668F942A /* MenuBarController.swift in Sources */,
 				AED08B66FB27098830F5E319 /* OllamaProvider.swift in Sources */,
 				2960991789B74467905B3EA3 /* OpenAICompatibleProvider.swift in Sources */,

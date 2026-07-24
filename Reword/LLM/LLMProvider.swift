@@ -69,7 +69,7 @@ protocol LLMProvider: Sendable {
 
 extension LLMProvider {
     /// Strips common wrapping the model sometimes adds despite instructions (reasoning blocks,
-    /// quotes, code fences).
+    /// Markdown formatting, quotes).
     func cleaned(_ raw: String) -> String {
         var result = raw.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -80,10 +80,12 @@ extension LLMProvider {
         }
         result = result.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if result.hasPrefix("```") {
-            result = result.replacingOccurrences(of: "```", with: "")
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-        }
+        // Models often reach for Markdown (bold, lists, code fences...) out of habit, even for a
+        // plain rewrite — but the destination is a plain-text field that won't render it. Runs
+        // before the quote check below, so e.g. a bold-wrapped quoted reply ("**"Hello"**") gets
+        // its emphasis stripped first and the quotes are still exposed to strip.
+        result = MarkdownStripper.strip(result)
+
         if result.count >= 2, result.hasPrefix("\""), result.hasSuffix("\"") {
             result = String(result.dropFirst().dropLast())
         }
