@@ -132,12 +132,15 @@ enum AXTextStrategy {
         return focusedElement()
     }
 
-    /// Signals Chromium-based apps (Electron, Chrome) to fully build out their accessibility
-    /// tree. Harmless no-op on apps that don't recognize the attribute (native Cocoa apps
-    /// already expose their full tree unconditionally).
+    /// Signals apps with cross-platform UI toolkits (Chromium/Electron, and — via the older,
+    /// more broadly recognized attribute — Gecko/Firefox) to fully build out their accessibility
+    /// tree instead of exposing just a stub. Harmless no-op on apps that don't recognize either
+    /// attribute (native Cocoa apps already expose their full tree unconditionally).
     private static func activateAccessibilityTree(pid: pid_t) {
         let appElement = AXUIElementCreateApplication(pid)
-        AXUIElementSetAttributeValue(appElement, "AXManualAccessibility" as CFString, kCFBooleanTrue)
+        let manualResult = AXUIElementSetAttributeValue(appElement, "AXManualAccessibility" as CFString, kCFBooleanTrue)
+        let enhancedResult = AXUIElementSetAttributeValue(appElement, "AXEnhancedUserInterface" as CFString, kCFBooleanTrue)
+        Log.textReplace.notice("Accessibility activation attempt: AXManualAccessibility=\(manualResult.rawValue, privacy: .public), AXEnhancedUserInterface=\(enhancedResult.rawValue, privacy: .public).")
     }
 
     /// Tries the system-wide focused element first (the normal/documented approach); if that
