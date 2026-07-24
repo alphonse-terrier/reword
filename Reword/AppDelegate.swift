@@ -111,8 +111,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 let result = try await withTimeout(seconds: 45) {
                     try await provider.reformulate(text: selected, systemPrompt: request.systemPrompt)
                 }
-                try await TextReplacer.replaceSelection(session, with: result, restoreOriginal: request.restorePasteboard)
-                self.overlay.show(.success)
+                if session.isReadOnly {
+                    Log.pipeline.debug("Selection is read-only — showing result popup instead of writing back.")
+                    self.overlay.show(.result(result))
+                } else {
+                    try await TextReplacer.replaceSelection(session, with: result, restoreOriginal: request.restorePasteboard)
+                    self.overlay.show(.success)
+                }
             } catch is CancellationError {
                 Log.pipeline.notice("Reformulation cancelled.")
                 self.overlay.hide()

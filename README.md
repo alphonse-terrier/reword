@@ -44,6 +44,7 @@ flowchart LR
 | 🔑 **Bring your own AI** | OpenAI, Anthropic, Ollama, your local Claude CLI login, or *any* other LLM CLI. |
 | 🎛️ **You define "reword"** | Fix spelling, sound more professional, shorten a wall of text, translate — built-in presets, or write your own. |
 | 📋 **Barely touches your clipboard** | Reads/writes your selection directly via macOS Accessibility — no clipboard involved in most apps. |
+| 🔍 **Knows when it can't write back** | Selected a message someone *sent you*? Reword detects read-only text and shows the result in a popup to copy, instead of guessing where to paste. |
 | 🔒 **Your keys stay yours** | Stored in the macOS Keychain, never on disk in plain text, one slot per provider. |
 | 🌐 **Speaks your language** | English by default, French included — follows your Mac's per-app language setting. |
 | 👀 **Never leaves you guessing** | A small overlay near your cursor shows progress and success/failure, live. |
@@ -179,6 +180,10 @@ A few things worth knowing if you're reading the code or hitting an edge case:
 - **Custom Command safety**: external processes run with concurrent stdout/stderr draining (no
   deadlock on large output), a hard timeout, and cancellation support — a stuck or misbehaving
   CLI can't hang the app.
+- **Read-only detection**: AX can confirm a selection isn't writable (e.g. `kAXSelectedTextAttribute`
+  not settable) — that's a hard signal, shown as a result popup instead of a paste attempt. When
+  AX gives no signal at all, a role-based heuristic (`AXTextField`/`AXTextArea`/`AXComboBox` = probably
+  editable) decides, defaulting to the popup when uncertain.
 
 ## 📄 License
 

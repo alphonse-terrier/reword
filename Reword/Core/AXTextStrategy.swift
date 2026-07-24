@@ -13,10 +13,20 @@ enum AXTextStrategy {
         }
     }
 
+    /// The result of reading the current selection via AX: either it's writable in place, or AX
+    /// explicitly confirms it isn't (e.g. read-only web content, a received chat message).
+    enum CaptureOutcome {
+        case editable(text: String, element: AXUIElement)
+        case readOnly(text: String)
+    }
+
     /// Captures the current selection. Throws `AXStrategyError.unsupported` (not a hard error —
-    /// callers should fall back to the pasteboard strategy) if the focused element doesn't
-    /// expose a settable `kAXSelectedTextAttribute`.
-    static func capture() throws -> (text: String, element: AXUIElement) {
+    /// callers should fall back to the pasteboard strategy) only when AX gives no signal at all
+    /// (the focused element or its selected text can't be read). When the text CAN be read but
+    /// `AXUIElementIsAttributeSettable` says it can't be written, that's a confirmed read-only
+    /// selection — returned as `.readOnly`, not thrown, so callers can show the result instead of
+    /// attempting a write-back.
+    static func capture() throws -> CaptureOutcome {
         let systemWide = AXUIElementCreateSystemWide()
 
         var focusedRef: CFTypeRef?
@@ -38,15 +48,16 @@ enum AXTextStrategy {
             throw TextReplacer.ReplacerError.noSelection
         }
 
-        // Confirm the attribute is actually settable before committing to this strategy — some
-        // elements report selected text but reject writes (e.g. read-only web content).
         var settable: DarwinBoolean = false
         let settableResult = AXUIElementIsAttributeSettable(element, kAXSelectedTextAttribute as CFString, &settable)
         guard settableResult == .success, settable.boolValue else {
-            throw AXStrategyError.unsupported
+            // AX read the text just fine but explicitly says it can't be written — a confirmed
+            // read-only selection (e.g. a received chat message, static web content), not an
+            // unsupported app.
+            return .readOnly(text: trimmed)
         }
 
-        return (trimmed, element)
+        return .editable(text: trimmed, element: element)
     }
 
     /// Writes `replacement` back into the element captured by `capture()`.
@@ -55,5 +66,40 @@ enum AXTextStrategy {
         guard result == .success else {
             throw AXStrategyError.unsupported
         }
+    }
+
+    // MARK: - Editability heuristic (used only when AX gives no signal at all)
+
+    /// Roles that represent typed-input controls. Used as a fallback heuristic only when
+    /// `kAXSelectedTextAttribute` isn't exposed at all (so AX can't answer the editability
+    /// question directly) — see `focusedElementLikelyEditable()`.
+    private static let editableRoles: Set<String> = ["AXTextField", "AXTextArea", "AXComboBox", "AXSearchField"]
+
+    /// Pure and testable independently of any real AX call.
+    static func isEditableRole(_ role: String?) -> Bool {
+        guard let role else { return false }
+        return editableRoles.contains(role)
+    }
+
+    /// Best-effort guess at whether the currently focused element accepts typed input, used only
+    /// when `kAXSelectedTextAttribute` isn't available at all. Defaults to "not editable" when
+    /// uncertain — callers should prefer showing a read-only result over risking a paste into the
+    /// wrong place.
+    static func focusedElementLikelyEditable() -> Bool {
+        let systemWide = AXUIElementCreateSystemWide()
+        var focusedRef: CFTypeRef?
+        guard
+            AXUIElementCopyAttributeValue(systemWide, kAXFocusedUIElementAttribute as CFString, &focusedRef) == .success,
+            let focusedRef
+        else { return false }
+        let element = focusedRef as! AXUIElement // swiftlint:disable:this force_cast
+
+        var roleRef: CFTypeRef?
+        guard
+            AXUIElementCopyAttributeValue(element, kAXRoleAttribute as CFString, &roleRef) == .success,
+            let role = roleRef as? String
+        else { return false }
+
+        return isEditableRole(role)
     }
 }

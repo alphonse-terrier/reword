@@ -26,6 +26,7 @@
 		6B594C11409EFF930148EA60 /* LLMProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A16BA21CC3423709F9AAFC5 /* LLMProvider.swift */; };
 		736F0D6216F1EF0D4088B66E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88BD30DCCCF528DDCFFD2B6 /* SettingsView.swift */; };
 		76F3C7ADD153158CAA8D804D /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97B682C2E568D331C37ABAE /* OverlayView.swift */; };
+		7BAC5889CA72468D324E2577 /* AXTextStrategyRoleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E36D6927B82B6EE64B9B778 /* AXTextStrategyRoleTests.swift */; };
 		7EF3FB8A74440427B5DB638C /* ProcessRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36921C251C6C1B4EB0C3BCA /* ProcessRunner.swift */; };
 		8CA333CF332ACD145B93E037 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D14D2DB7E1AC4AD870BDF5 /* SettingsStore.swift */; };
 		976C24D984EA87C8BD045B90 /* CommandProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9C07B798FDD4E97549BB0C /* CommandProvider.swift */; };
@@ -82,6 +83,7 @@
 		8BDE7B4FD6F57F5F9204807D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		95A31E189F313E5DC02B267E /* LLMProviderFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMProviderFactoryTests.swift; sourceTree = "<group>"; };
 		99ACBB1995E98464E4008695 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		9E36D6927B82B6EE64B9B778 /* AXTextStrategyRoleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXTextStrategyRoleTests.swift; sourceTree = "<group>"; };
 		9F59A5CF078B0E3A344AE490 /* ClaudeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeModels.swift; sourceTree = "<group>"; };
 		A0BD50193DB4A6734B6FF03E /* ShellLikeTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellLikeTokenizer.swift; sourceTree = "<group>"; };
 		A15BCFE635B0AA2212E9C72A /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 		1361917B01571EACBB3F7B2C /* RewordTests */ = {
 			isa = PBXGroup;
 			children = (
+				9E36D6927B82B6EE64B9B778 /* AXTextStrategyRoleTests.swift */,
 				D80F623652266CDE78C3F920 /* CleanedTests.swift */,
 				95A31E189F313E5DC02B267E /* LLMProviderFactoryTests.swift */,
 				1F58DD9893D00D3515301F4B /* ProcessRunnerTests.swift */,
@@ -321,6 +324,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BAC5889CA72468D324E2577 /* AXTextStrategyRoleTests.swift in Sources */,
 				9E1CD131B695D1D72AF24883 /* CleanedTests.swift in Sources */,
 				9E5FC482281E2EBE01E012A5 /* LLMProviderFactoryTests.swift in Sources */,
 				36D3E9D26AA57FDD3AEB7BD0 /* ProcessRunnerTests.swift in Sources */,

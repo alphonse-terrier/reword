@@ -11,6 +11,9 @@ final class StatusOverlayController {
         case working
         case success
         case failure(String)
+        /// A read-only selection's reworded result — the user needs to read and copy it
+        /// manually, so this state doesn't auto-dismiss and accepts mouse input (Copy/Close).
+        case result(String)
     }
 
     private var panel: NSPanel?
@@ -23,15 +26,22 @@ final class StatusOverlayController {
         let panel = self.panel ?? makePanel()
         self.panel = panel
 
-        let hostingView = NSHostingView(rootView: OverlayView(state: state))
+        let hostingView = NSHostingView(rootView: OverlayView(state: state, onClose: { [weak self] in self?.hide() }))
         panel.contentView = hostingView
         let fittingSize = hostingView.fittingSize
         panel.setContentSize(fittingSize)
         positionNearCursor(panel)
+
+        if case .result = state {
+            panel.ignoresMouseEvents = false
+        } else {
+            panel.ignoresMouseEvents = true
+        }
+
         panel.orderFrontRegardless()
 
         switch state {
-        case .working:
+        case .working, .result:
             break
         case .success:
             scheduleDismiss(after: 0.9)
