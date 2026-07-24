@@ -41,9 +41,12 @@ enum AXTextStrategy {
         // AX always returns an AXUIElement for this attribute on `.success`.
         let element = focusedRef as! AXUIElement // swiftlint:disable:this force_cast
 
+        let elementRole = role(of: element)
+
         var selectedTextRef: CFTypeRef?
         let textResult = AXUIElementCopyAttributeValue(element, kAXSelectedTextAttribute as CFString, &selectedTextRef)
         guard textResult == .success, let text = selectedTextRef as? String else {
+            Log.textReplace.notice("kAXSelectedTextAttribute unreadable (role: \(elementRole ?? "nil", privacy: .public), AXError: \(textResult.rawValue)) — falling back to pasteboard capture.")
             throw AXStrategyError.unsupported
         }
 
@@ -64,10 +67,10 @@ enum AXTextStrategy {
         // concluding read-only.
         var valueSettable: DarwinBoolean = false
         let valueSettableResult = AXUIElementIsAttributeSettable(element, kAXValueAttribute as CFString, &valueSettable)
-        let isEditable = isEditableSignal(
-            valueSettable: valueSettableResult == .success && valueSettable.boolValue,
-            role: role(of: element)
-        )
+        let valueIsSettable = valueSettableResult == .success && valueSettable.boolValue
+        let isEditable = isEditableSignal(valueSettable: valueIsSettable, role: elementRole)
+
+        Log.textReplace.notice("kAXSelectedTextAttribute not settable (role: \(elementRole ?? "nil", privacy: .public), kAXValue settable: \(valueIsSettable, privacy: .public)) → treating as \(isEditable ? "editable via pasteboard" : "read-only", privacy: .public).")
 
         if isEditable {
             return .editableViaPasteboard(text: trimmed)
@@ -124,9 +127,12 @@ enum AXTextStrategy {
 
         var valueSettable: DarwinBoolean = false
         let valueSettableResult = AXUIElementIsAttributeSettable(element, kAXValueAttribute as CFString, &valueSettable)
-        return isEditableSignal(
-            valueSettable: valueSettableResult == .success && valueSettable.boolValue,
-            role: role(of: element)
-        )
+        let valueIsSettable = valueSettableResult == .success && valueSettable.boolValue
+        let elementRole = role(of: element)
+        let result = isEditableSignal(valueSettable: valueIsSettable, role: elementRole)
+
+        Log.textReplace.notice("No AX text-selection signal at all — role heuristic (role: \(elementRole ?? "nil", privacy: .public), kAXValue settable: \(valueIsSettable, privacy: .public)) → \(result ? "editable" : "read-only", privacy: .public).")
+
+        return result
     }
 }
