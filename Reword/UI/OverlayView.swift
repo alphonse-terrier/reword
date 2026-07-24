@@ -82,9 +82,11 @@ struct OverlayView: View {
                 Text(text)
                     .font(.system(size: 13))
                     .textSelection(.enabled)
+                    .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: 320, maxHeight: 200)
+            .frame(maxWidth: 320)
+            .frame(maxHeight: 400)
 
             Button(action: copy) {
                 Label(justCopied ? String(localized: "Copied") : String(localized: "Copy"), systemImage: justCopied ? "checkmark" : "doc.on.doc")

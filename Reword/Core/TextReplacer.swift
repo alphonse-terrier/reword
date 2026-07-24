@@ -54,9 +54,14 @@ enum TextReplacer {
 
         do {
             switch try AXTextStrategy.capture() {
-            case .editable(let text, let element):
+            case .editableAX(let text, let element):
                 Log.textReplace.debug("Captured selection via Accessibility (editable).")
                 return (text, Session(strategy: .editableAX(element: element)))
+            case .editableViaPasteboard(let text):
+                Log.textReplace.debug("Captured selection via Accessibility (editable, but writing back via pasteboard).")
+                let frontmostApp = NSWorkspace.shared.frontmostApplication?.processIdentifier
+                let saved = PasteboardTextStrategy.snapshotForRestore()
+                return (text, Session(strategy: .editablePasteboard(savedItems: saved, frontmostApp: frontmostApp)))
             case .readOnly(let text):
                 Log.textReplace.debug("Captured selection via Accessibility (confirmed read-only).")
                 return (text, Session(strategy: .readOnly))

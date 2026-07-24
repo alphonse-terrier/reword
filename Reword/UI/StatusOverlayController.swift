@@ -27,6 +27,7 @@ final class StatusOverlayController {
         self.panel = panel
 
         let hostingView = NSHostingView(rootView: OverlayView(state: state, onClose: { [weak self] in self?.hide() }))
+        hostingView.sizingOptions = .standardBounds
         panel.contentView = hostingView
         let fittingSize = hostingView.fittingSize
         panel.setContentSize(fittingSize)

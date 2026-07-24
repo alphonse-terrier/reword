@@ -68,6 +68,13 @@ enum PasteboardTextStrategy {
         }
     }
 
+    /// A snapshot of the current pasteboard contents, for restoring after a paste — used when
+    /// the text to write back was already read some other way (AX) and only the write side needs
+    /// the pasteboard, so there's no need to synthesize a ⌘C first.
+    static func snapshotForRestore() -> [SavedItem] {
+        snapshotItems(of: NSPasteboard.general)
+    }
+
     // MARK: - Helpers
 
     private static func waitForChangeCount(above baseline: Int, on pasteboard: NSPasteboard, timeout: TimeInterval) async -> Bool {
