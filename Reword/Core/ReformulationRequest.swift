@@ -13,6 +13,7 @@ struct ReformulationRequest: Sendable {
     let commandArgumentsLine: String
     let systemPrompt: String
     let restorePasteboard: Bool
+    let replacementMode: TextReplacementMode
 
     func makeProvider() -> LLMProvider {
         LLMProviderFactory.make(

@@ -20,6 +20,7 @@
 		39347B36DE4D7CAF49B00DB5 /* PresetsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FDC784C1E7ECA9A20FFC44 /* PresetsSettingsView.swift */; };
 		3B167B89D7360DD89B049CFB /* ShellLikeTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BD50193DB4A6734B6FF03E /* ShellLikeTokenizer.swift */; };
 		4176D4DAEEE76FC81A64C659 /* MarkdownStripper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A256958132CA90B7823590E9 /* MarkdownStripper.swift */; };
+		43336AC954B175807BD5727F /* TextReplacementMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD8E6682C390490B3FFF76A /* TextReplacementMode.swift */; };
 		5C4F584B8A47425455D1A769 /* ClaudeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59A5CF078B0E3A344AE490 /* ClaudeModels.swift */; };
 		5F37DC804AD32F2E67857F13 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6078AB73D6AEBFEDA0D5EC0D /* SettingsStoreTests.swift */; };
 		60D80708CE74739BE3FBAF8F /* CommandPresets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8806041565730DA6C9D8BFF /* CommandPresets.swift */; };
@@ -69,6 +70,7 @@
 		0B0B932F6603D64A47296A07 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0B69BA0020B74698FAA4B8D6 /* OllamaProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OllamaProvider.swift; sourceTree = "<group>"; };
 		0CB0805AD555DBAC82495D7D /* LLMProviderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMProviderFactory.swift; sourceTree = "<group>"; };
+		0CD8E6682C390490B3FFF76A /* TextReplacementMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextReplacementMode.swift; sourceTree = "<group>"; };
 		0EC4CEA8CBD1EC19CCED0A83 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		16079FCFB6A6C0090492370C /* MarkdownStripperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStripperTests.swift; sourceTree = "<group>"; };
 		1AE96FBAAC911F8D9F1A26FA /* Concurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Concurrency.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				6C51072B3E20643A8E5A3BD4 /* ReformulationRequest.swift */,
 				39C3A0CBCE8F5C77A436141A /* ShellEnvironment.swift */,
 				A0BD50193DB4A6734B6FF03E /* ShellLikeTokenizer.swift */,
+				0CD8E6682C390490B3FFF76A /* TextReplacementMode.swift */,
 				FDDE91DB6D900280927F07B6 /* TextReplacer.swift */,
 			);
 			path = Core;
@@ -377,6 +380,7 @@
 				A99BDB517E96D37147F00DEC /* ShellEnvironment.swift in Sources */,
 				3B167B89D7360DD89B049CFB /* ShellLikeTokenizer.swift in Sources */,
 				1569F1350C83B8880A724D0A /* StatusOverlayController.swift in Sources */,
+				43336AC954B175807BD5727F /* TextReplacementMode.swift in Sources */,
 				66FD984739C6CBF89F3BD300 /* TextReplacer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

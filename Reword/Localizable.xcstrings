@@ -11,6 +11,56 @@
         }
       }
     },
+    "Always editable" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toujours éditable"
+          }
+        }
+      }
+    },
+    "Always read-only" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toujours lecture seule"
+          }
+        }
+      }
+    },
+    "Auto-detect" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Détection automatique"
+          }
+        }
+      }
+    },
+    "Auto-detect uses Accessibility to guess whether the selection is editable. Override this if it gets it wrong for this particular preset." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La détection automatique utilise l'Accessibilité pour deviner si la sélection est éditable. Force ce réglage si elle se trompe pour ce preset en particulier."
+          }
+        }
+      }
+    },
+    "Text Replacement" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remplacement de texte"
+          }
+        }
+      }
+    },
     "Allow Accessibility…" : {
       "localizations" : {
         "fr" : {

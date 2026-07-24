@@ -92,6 +92,21 @@ struct PresetsSettingsView: View {
                     label: "Apply this preset directly"
                 )
             }
+
+            Section {
+                Picker("Text Replacement", selection: Binding(
+                    get: { settings.presets[index].effectiveReplacementMode },
+                    set: { settings.presets[index].replacementMode = $0 }
+                )) {
+                    ForEach(TextReplacementMode.allCases) { mode in
+                        Text(mode.displayName).tag(mode)
+                    }
+                }
+            } footer: {
+                Text("Auto-detect uses Accessibility to guess whether the selection is editable. Override this if it gets it wrong for this particular preset.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
         .formStyle(.grouped)
     }

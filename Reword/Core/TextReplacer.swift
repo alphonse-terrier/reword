@@ -49,21 +49,33 @@ enum TextReplacer {
     /// Captures the current selection. Tries Accessibility first, which can also tell us
     /// definitively that the selection is read-only. If AX gives no signal at all, falls back to
     /// the pasteboard strategy, using a role-based heuristic to guess editability.
-    static func captureSelectedText() async throws -> (text: String, session: Session) {
+    ///
+    /// `mode` overrides the outcome of that detection: `.alwaysEditable` forces a write-back
+    /// attempt (via pasteboard, since a confirmed-read-only AX element has no usable write path)
+    /// even when detection says read-only; `.alwaysReadOnly` forces the read-only popup even
+    /// when detection says editable. `.automatic` is the detection result as-is.
+    static func captureSelectedText(mode: TextReplacementMode = .automatic) async throws -> (text: String, session: Session) {
         guard AccessibilityPermission.isTrusted else { throw ReplacerError.accessibilityNotTrusted }
 
         do {
             switch try await AXTextStrategy.capture() {
             case .editableAX(let text, let element):
                 Log.textReplace.debug("Captured selection via Accessibility (editable).")
+                if mode == .alwaysReadOnly {
+                    return (text, Session(strategy: .readOnly))
+                }
                 return (text, Session(strategy: .editableAX(element: element, originalText: text)))
             case .editableViaPasteboard(let text):
                 Log.textReplace.debug("Captured selection via Accessibility (editable, but writing back via pasteboard).")
-                let frontmostApp = NSWorkspace.shared.frontmostApplication?.processIdentifier
-                let saved = PasteboardTextStrategy.snapshotForRestore()
-                return (text, Session(strategy: .editablePasteboard(savedItems: saved, frontmostApp: frontmostApp)))
+                if mode == .alwaysReadOnly {
+                    return (text, Session(strategy: .readOnly))
+                }
+                return (text, Session(strategy: .editablePasteboard(savedItems: PasteboardTextStrategy.snapshotForRestore(), frontmostApp: NSWorkspace.shared.frontmostApplication?.processIdentifier)))
             case .readOnly(let text):
                 Log.textReplace.debug("Captured selection via Accessibility (confirmed read-only).")
+                if mode == .alwaysEditable {
+                    return (text, Session(strategy: .editablePasteboard(savedItems: PasteboardTextStrategy.snapshotForRestore(), frontmostApp: NSWorkspace.shared.frontmostApplication?.processIdentifier)))
+                }
                 return (text, Session(strategy: .readOnly))
             }
         } catch is AXTextStrategy.AXStrategyError {
@@ -77,13 +89,21 @@ enum TextReplacer {
         let (text, saved) = try await PasteboardTextStrategy.capture()
         let frontmostApp = NSWorkspace.shared.frontmostApplication?.processIdentifier
 
-        // No direct AX signal, so guess from the focused element's role. Defaults to read-only
-        // when uncertain — a spurious popup is far less bad than pasting into the wrong place.
-        if await AXTextStrategy.focusedElementLikelyEditable() {
+        switch mode {
+        case .alwaysEditable:
             return (text, Session(strategy: .editablePasteboard(savedItems: saved, frontmostApp: frontmostApp)))
-        } else {
-            Log.textReplace.debug("Focused element's role doesn't look editable; treating selection as read-only.")
+        case .alwaysReadOnly:
             return (text, Session(strategy: .readOnly))
+        case .automatic:
+            // No direct AX signal, so guess from the focused element's role. Defaults to
+            // read-only when uncertain — a spurious popup is far less bad than pasting into the
+            // wrong place.
+            if await AXTextStrategy.focusedElementLikelyEditable() {
+                return (text, Session(strategy: .editablePasteboard(savedItems: saved, frontmostApp: frontmostApp)))
+            } else {
+                Log.textReplace.debug("Focused element's role doesn't look editable; treating selection as read-only.")
+                return (text, Session(strategy: .readOnly))
+            }
         }
     }
 

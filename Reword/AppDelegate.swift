@@ -93,7 +93,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             commandExecutable: settings.commandExecutable,
             commandArgumentsLine: settings.commandArgumentsLine,
             systemPrompt: systemPrompt,
-            restorePasteboard: settings.restorePasteboard
+            restorePasteboard: settings.restorePasteboard,
+            replacementMode: preset.effectiveReplacementMode
         )
 
         menuBarController.setBusy(true)
@@ -106,7 +107,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.currentTask = nil
             }
             do {
-                let (selected, session) = try await TextReplacer.captureSelectedText()
+                let (selected, session) = try await TextReplacer.captureSelectedText(mode: request.replacementMode)
                 let provider = request.makeProvider()
                 let result = try await withTimeout(seconds: 45) {
                     try await provider.reformulate(text: selected, systemPrompt: request.systemPrompt)

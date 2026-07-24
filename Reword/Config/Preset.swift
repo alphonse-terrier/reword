@@ -7,6 +7,14 @@ struct Preset: Identifiable, Codable, Equatable {
     var id: UUID = UUID()
     var name: String
     var systemPrompt: String
+    /// Overrides how this preset decides whether a selection can be written back to. `nil` means
+    /// "use the automatic default" — kept optional so presets saved before this setting existed
+    /// decode without needing a migration.
+    var replacementMode: TextReplacementMode?
+
+    var effectiveReplacementMode: TextReplacementMode {
+        replacementMode ?? .automatic
+    }
 
     /// Presets shipped by default on first launch.
     static let defaults: [Preset] = [
