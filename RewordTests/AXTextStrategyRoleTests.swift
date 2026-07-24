@@ -43,4 +43,20 @@ final class AXTextStrategyRoleTests: XCTestCase {
         XCTAssertFalse(AXTextStrategy.isEditableSignal(valueSettable: false, role: "AXStaticText"))
         XCTAssertFalse(AXTextStrategy.isEditableSignal(valueSettable: false, role: nil))
     }
+
+    // MARK: - isKnownEditableApp (Microsoft Office allowlist)
+
+    func testKnownOfficeAppsAreTreatedAsEditable() {
+        // Regression case: Word's custom text-rendering engine resolves the focused element to
+        // a generic AXSplitGroup container with no editable signal at all, no matter how long we
+        // wait — these apps are allowlisted rather than defaulting to read-only.
+        XCTAssertTrue(AXTextStrategy.isKnownEditableApp(bundleIdentifier: "com.microsoft.Word"))
+        XCTAssertTrue(AXTextStrategy.isKnownEditableApp(bundleIdentifier: "com.microsoft.Excel"))
+        XCTAssertTrue(AXTextStrategy.isKnownEditableApp(bundleIdentifier: "com.microsoft.Powerpoint"))
+    }
+
+    func testUnknownAppsAreNotAssumedEditable() {
+        XCTAssertFalse(AXTextStrategy.isKnownEditableApp(bundleIdentifier: "com.apple.Safari"))
+        XCTAssertFalse(AXTextStrategy.isKnownEditableApp(bundleIdentifier: nil))
+    }
 }

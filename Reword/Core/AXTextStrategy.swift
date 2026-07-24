@@ -179,6 +179,25 @@ enum AXTextStrategy {
 
     // MARK: - Editability heuristics
 
+    /// Apps whose Accessibility support is known to be too incomplete for the role/value
+    /// heuristics to ever succeed — e.g. Microsoft Office apps render text with a custom engine
+    /// rather than standard Cocoa text controls, so the focused element resolves to a generic
+    /// layout container (`AXSplitGroup`) with no editable signal at all, no matter how long we
+    /// wait. For these, default to "editable" instead of "read-only": worst case, pasting into
+    /// genuinely read-only content in one of these apps is a harmless no-op, whereas defaulting
+    /// to read-only breaks editing entirely for every document in the app.
+    private static let knownEditableDespiteWeakAX: Set<String> = [
+        "com.microsoft.Word",
+        "com.microsoft.Excel",
+        "com.microsoft.Powerpoint",
+    ]
+
+    /// Pure and testable independently of any real AX call.
+    static func isKnownEditableApp(bundleIdentifier: String?) -> Bool {
+        guard let bundleIdentifier else { return false }
+        return knownEditableDespiteWeakAX.contains(bundleIdentifier)
+    }
+
     /// Roles that represent typed-input controls.
     private static let editableRoles: Set<String> = ["AXTextField", "AXTextArea", "AXComboBox", "AXSearchField"]
 
@@ -208,6 +227,12 @@ enum AXTextStrategy {
     /// Defaults to "not editable" when uncertain — callers should prefer showing a read-only
     /// result over risking a paste into the wrong place.
     static func focusedElementLikelyEditable() async -> Bool {
+        let bundleIdentifier = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
+        if isKnownEditableApp(bundleIdentifier: bundleIdentifier) {
+            Log.textReplace.notice("Frontmost app (\(bundleIdentifier ?? "nil", privacy: .public)) has known-unreliable AX role reporting — assuming editable.")
+            return true
+        }
+
         guard let element = await resolveFocusedElement() else { return false }
 
         var valueSettable: DarwinBoolean = false
