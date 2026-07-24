@@ -1,4 +1,5 @@
 import ApplicationServices
+import AppKit
 
 /// Reads/writes the selected text directly on the focused UI element via the Accessibility API
 /// (`kAXSelectedTextAttribute`). No pasteboard involved, so the user's clipboard is never
@@ -30,16 +31,10 @@ enum AXTextStrategy {
     /// Captures the current selection. Throws `AXStrategyError.unsupported` (not a hard error —
     /// callers should fall back to the pasteboard strategy) only when AX gives no signal at all
     /// (the focused element or its selected text can't be read).
-    static func capture() throws -> CaptureOutcome {
-        let systemWide = AXUIElementCreateSystemWide()
-
-        var focusedRef: CFTypeRef?
-        let focusedResult = AXUIElementCopyAttributeValue(systemWide, kAXFocusedUIElementAttribute as CFString, &focusedRef)
-        guard focusedResult == .success, let focusedRef else {
+    static func capture() async throws -> CaptureOutcome {
+        guard let element = await resolveFocusedElement() else {
             throw AXStrategyError.unsupported
         }
-        // AX always returns an AXUIElement for this attribute on `.success`.
-        let element = focusedRef as! AXUIElement // swiftlint:disable:this force_cast
 
         let elementRole = role(of: element)
 
@@ -86,6 +81,71 @@ enum AXTextStrategy {
         }
     }
 
+    // MARK: - Focused element lookup
+
+    /// Resolves the currently focused AX element, retrying once after nudging the frontmost
+    /// app's accessibility tree awake if the first attempt bottoms out at the window level.
+    /// Chromium (Electron apps like Slack) and Firefox only build out their full accessibility
+    /// tree — down to the actual focused text control — once something signals that assistive
+    /// tech is present; before that, focused-element queries can report just the window itself
+    /// (role `AXWindow`) instead of the control inside it.
+    private static func resolveFocusedElement() async -> AXUIElement? {
+        if let element = focusedElement(), role(of: element) != "AXWindow" {
+            return element
+        }
+
+        guard let frontmostPID = NSWorkspace.shared.frontmostApplication?.processIdentifier else {
+            return focusedElement()
+        }
+
+        activateAccessibilityTree(pid: frontmostPID)
+        try? await Task.sleep(nanoseconds: 150_000_000)
+
+        return focusedElement()
+    }
+
+    /// Signals Chromium-based apps (Electron, Chrome) to fully build out their accessibility
+    /// tree. Harmless no-op on apps that don't recognize the attribute (native Cocoa apps
+    /// already expose their full tree unconditionally).
+    private static func activateAccessibilityTree(pid: pid_t) {
+        let appElement = AXUIElementCreateApplication(pid)
+        AXUIElementSetAttributeValue(appElement, "AXManualAccessibility" as CFString, kCFBooleanTrue)
+    }
+
+    /// Tries the system-wide focused element first (the normal/documented approach); if that
+    /// fails, asks the frontmost application's own AX element directly.
+    private static func focusedElement() -> AXUIElement? {
+        var focusedRef: CFTypeRef?
+        let systemWideResult = AXUIElementCopyAttributeValue(
+            AXUIElementCreateSystemWide(),
+            kAXFocusedUIElementAttribute as CFString,
+            &focusedRef
+        )
+        if systemWideResult == .success, let focusedRef {
+            return (focusedRef as! AXUIElement) // swiftlint:disable:this force_cast
+        }
+
+        Log.textReplace.notice("System-wide kAXFocusedUIElementAttribute failed (AXError \(systemWideResult.rawValue, privacy: .public)); trying the frontmost app directly.")
+
+        guard let frontmostPID = NSWorkspace.shared.frontmostApplication?.processIdentifier else {
+            Log.textReplace.notice("No frontmost application to query either.")
+            return nil
+        }
+
+        var appFocusedRef: CFTypeRef?
+        let appResult = AXUIElementCopyAttributeValue(
+            AXUIElementCreateApplication(frontmostPID),
+            kAXFocusedUIElementAttribute as CFString,
+            &appFocusedRef
+        )
+        guard appResult == .success, let appFocusedRef else {
+            Log.textReplace.notice("Frontmost app's kAXFocusedUIElementAttribute also failed (AXError \(appResult.rawValue, privacy: .public)).")
+            return nil
+        }
+
+        return (appFocusedRef as! AXUIElement) // swiftlint:disable:this force_cast
+    }
+
     // MARK: - Editability heuristics
 
     /// Roles that represent typed-input controls.
@@ -116,14 +176,8 @@ enum AXTextStrategy {
     /// when `kAXSelectedTextAttribute` isn't available at all (so `capture()` can't even try).
     /// Defaults to "not editable" when uncertain — callers should prefer showing a read-only
     /// result over risking a paste into the wrong place.
-    static func focusedElementLikelyEditable() -> Bool {
-        let systemWide = AXUIElementCreateSystemWide()
-        var focusedRef: CFTypeRef?
-        guard
-            AXUIElementCopyAttributeValue(systemWide, kAXFocusedUIElementAttribute as CFString, &focusedRef) == .success,
-            let focusedRef
-        else { return false }
-        let element = focusedRef as! AXUIElement // swiftlint:disable:this force_cast
+    static func focusedElementLikelyEditable() async -> Bool {
+        guard let element = await resolveFocusedElement() else { return false }
 
         var valueSettable: DarwinBoolean = false
         let valueSettableResult = AXUIElementIsAttributeSettable(element, kAXValueAttribute as CFString, &valueSettable)

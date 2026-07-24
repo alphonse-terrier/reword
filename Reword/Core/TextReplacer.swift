@@ -53,7 +53,7 @@ enum TextReplacer {
         guard AccessibilityPermission.isTrusted else { throw ReplacerError.accessibilityNotTrusted }
 
         do {
-            switch try AXTextStrategy.capture() {
+            switch try await AXTextStrategy.capture() {
             case .editableAX(let text, let element):
                 Log.textReplace.debug("Captured selection via Accessibility (editable).")
                 return (text, Session(strategy: .editableAX(element: element)))
@@ -79,7 +79,7 @@ enum TextReplacer {
 
         // No direct AX signal, so guess from the focused element's role. Defaults to read-only
         // when uncertain — a spurious popup is far less bad than pasting into the wrong place.
-        if AXTextStrategy.focusedElementLikelyEditable() {
+        if await AXTextStrategy.focusedElementLikelyEditable() {
             return (text, Session(strategy: .editablePasteboard(savedItems: saved, frontmostApp: frontmostApp)))
         } else {
             Log.textReplace.debug("Focused element's role doesn't look editable; treating selection as read-only.")
