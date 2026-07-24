@@ -22,8 +22,8 @@ targets:
       path: Reword/Info.plist
       properties:
         CFBundleDisplayName: Reword
-        CFBundleShortVersionString: "0.2.1"
-        CFBundleVersion: "3"
+        CFBundleShortVersionString: "0.2.2"
+        CFBundleVersion: "4"
         LSUIElement: true
         NSAppleEventsUsageDescription: "Reword needs to send keyboard shortcuts (copy/paste) to the frontmost app to rephrase the selected text."
         CFBundleDevelopmentRegion: en
@@ -36,8 +36,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.polyconseil.alphonse.Reword
-        MARKETING_VERSION: "0.2.1"
-        CURRENT_PROJECT_VERSION: "3"
+        MARKETING_VERSION: "0.2.2"
+        CURRENT_PROJECT_VERSION: "4"
         SWIFT_VERSION: "5.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ENABLE_HARDENED_RUNTIME: true
