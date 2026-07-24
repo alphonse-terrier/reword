@@ -15,7 +15,7 @@ struct SettingsView: View {
                 .tabItem { Label("General", systemImage: "gearshape") }
         }
         .padding(20)
-        .frame(minWidth: 480, idealWidth: 560, minHeight: 360, idealHeight: 420)
+        .frame(minWidth: 560, idealWidth: 680, minHeight: 460, idealHeight: 620)
     }
 }
 

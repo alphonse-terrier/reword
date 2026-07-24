@@ -11,7 +11,7 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         self.onClose = onClose
 
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 560, height: 420),
+            contentRect: NSRect(x: 0, y: 0, width: 680, height: 620),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false
@@ -19,7 +19,7 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         window.title = String(localized: "Reword Settings")
         window.center()
         window.isReleasedWhenClosed = false
-        window.minSize = NSSize(width: 480, height: 360)
+        window.minSize = NSSize(width: 560, height: 460)
         window.contentView = NSHostingView(rootView: SettingsView(settings: settings))
 
         super.init(window: window)
