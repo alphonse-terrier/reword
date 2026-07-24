@@ -94,7 +94,7 @@ struct PresetsSettingsView: View {
             }
 
             Section {
-                Picker("Text Replacement", selection: Binding(
+                Picker("Editability", selection: Binding(
                     get: { settings.presets[index].effectiveReplacementMode },
                     set: { settings.presets[index].replacementMode = $0 }
                 )) {

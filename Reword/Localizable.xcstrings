@@ -51,12 +51,12 @@
         }
       }
     },
-    "Text Replacement" : {
+    "Editability" : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remplacement de texte"
+            "value" : "Éditabilité"
           }
         }
       }
