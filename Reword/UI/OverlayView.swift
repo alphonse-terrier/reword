@@ -78,15 +78,11 @@ struct OverlayView: View {
                 .accessibilityLabel(Text("Close"))
             }
 
-            ScrollView {
-                Text(text)
-                    .font(.system(size: 13))
-                    .textSelection(.enabled)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .frame(maxWidth: 320)
-            .frame(maxHeight: 400)
+            Text(text)
+                .font(.system(size: 13))
+                .textSelection(.enabled)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: 320, alignment: .leading)
 
             Button(action: copy) {
                 Label(justCopied ? String(localized: "Copied") : String(localized: "Copy"), systemImage: justCopied ? "checkmark" : "doc.on.doc")
