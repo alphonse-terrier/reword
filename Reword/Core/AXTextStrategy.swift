@@ -100,23 +100,34 @@ enum AXTextStrategy {
 
     // MARK: - Focused element lookup
 
-    /// Resolves the currently focused AX element, retrying once after nudging the frontmost
-    /// app's accessibility tree awake if the first attempt bottoms out at the window level.
+    /// Delays between retries when the focused element bottoms out at the window level.
     /// Chromium (Electron apps like Slack) and Firefox only build out their full accessibility
     /// tree — down to the actual focused text control — once something signals that assistive
     /// tech is present; before that, focused-element queries can report just the window itself
-    /// (role `AXWindow`) instead of the control inside it.
+    /// (role `AXWindow`) instead of the control inside it. Chromium responds to an explicit
+    /// activation call almost immediately; Gecko (Firefox) has no equivalent flag and its
+    /// accessibility engine can take noticeably longer to spin up, hence the longer/multiple
+    /// retries — this only adds latency for apps that fail the first check at all.
+    private static let focusResolutionRetryDelaysNanoseconds: [UInt64] = [150_000_000, 350_000_000, 500_000_000]
+
+    /// Resolves the currently focused AX element, retrying with increasing delays after nudging
+    /// the frontmost app's accessibility tree awake if the first attempt bottoms out at the
+    /// window level.
     private static func resolveFocusedElement() async -> AXUIElement? {
         if let element = focusedElement(), role(of: element) != "AXWindow" {
             return element
         }
 
-        guard let frontmostPID = NSWorkspace.shared.frontmostApplication?.processIdentifier else {
-            return focusedElement()
+        if let frontmostPID = NSWorkspace.shared.frontmostApplication?.processIdentifier {
+            activateAccessibilityTree(pid: frontmostPID)
         }
 
-        activateAccessibilityTree(pid: frontmostPID)
-        try? await Task.sleep(nanoseconds: 150_000_000)
+        for delay in focusResolutionRetryDelaysNanoseconds {
+            try? await Task.sleep(nanoseconds: delay)
+            if let element = focusedElement(), role(of: element) != "AXWindow" {
+                return element
+            }
+        }
 
         return focusedElement()
     }
