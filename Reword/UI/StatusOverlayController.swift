@@ -18,10 +18,12 @@ final class StatusOverlayController {
 
     private var panel: NSPanel?
     private var dismissTask: Task<Void, Never>?
+    private var clickOutsideMonitor: Any?
 
     func show(_ state: State) {
         dismissTask?.cancel()
         dismissTask = nil
+        removeClickOutsideMonitor()
 
         let panel = self.panel ?? makePanel()
         self.panel = panel
@@ -35,6 +37,7 @@ final class StatusOverlayController {
 
         if case .result = state {
             panel.ignoresMouseEvents = false
+            installClickOutsideMonitor()
         } else {
             panel.ignoresMouseEvents = true
         }
@@ -54,7 +57,24 @@ final class StatusOverlayController {
     func hide() {
         dismissTask?.cancel()
         dismissTask = nil
+        removeClickOutsideMonitor()
         panel?.orderOut(nil)
+    }
+
+    /// Dismisses the (interactive, non-auto-dismissing) result popup as soon as the user clicks
+    /// anywhere else — this only sees clicks in *other* apps, which is exactly what's needed
+    /// since Reword's own popup already handles its own clicks (Copy/Close) directly.
+    private func installClickOutsideMonitor() {
+        clickOutsideMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown, .otherMouseDown]) { [weak self] _ in
+            Task { @MainActor in self?.hide() }
+        }
+    }
+
+    private func removeClickOutsideMonitor() {
+        if let clickOutsideMonitor {
+            NSEvent.removeMonitor(clickOutsideMonitor)
+            self.clickOutsideMonitor = nil
+        }
     }
 
     private func scheduleDismiss(after seconds: TimeInterval) {
