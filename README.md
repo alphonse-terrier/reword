@@ -44,7 +44,7 @@ flowchart LR
 | 🔑 **Bring your own AI** | OpenAI, Anthropic, Ollama, your local Claude CLI login, or *any* other LLM CLI. |
 | 🎛️ **You define "reword"** | Fix spelling, sound more professional, shorten a wall of text, translate — built-in presets, or write your own. |
 | 📋 **Barely touches your clipboard** | Reads/writes your selection directly via macOS Accessibility — no clipboard involved in most apps. |
-| 🔍 **Knows when it can't write back** | Selected a message someone *sent you*? Reword detects read-only text and shows the result in a popup to copy, instead of guessing where to paste. |
+| 🔍 **Knows when it can't write back** | Selected a message someone *sent you*, or text on a web page? Reword detects read-only content and shows the result in a popup — sized to fit, dismissible with one click anywhere — instead of guessing where to paste. |
 | 🔒 **Your keys stay yours** | Stored in the macOS Keychain, never on disk in plain text, one slot per provider. |
 | 🌐 **Speaks your language** | English by default, French included — follows your Mac's per-app language setting. |
 | 👀 **Never leaves you guessing** | A small overlay near your cursor shows progress and success/failure, live. |
@@ -76,6 +76,11 @@ No accounts to create with Reword itself, no onboarding wizard. Just you, your A
   you wrote in, unless you're specifically asking it to translate.
 - **Rephrase Now / Cancel** in the menu — trigger a rewrite without memorizing the shortcut, or
   stop one that's taking too long (there's also a 45-second automatic timeout).
+- **A read-only result popup** for text you can't write back to — a message someone sent you, a
+  paragraph on a web page, anything Reword can tell (or reasonably guess) isn't editable. Instead
+  of guessing where a paste might land, it shows the rewritten text in a small popup next to your
+  cursor: selectable, with a **Copy** button, sized to the text so you never have to scroll, and
+  dismissed the moment you click anywhere else.
 
 ## 🔌 Bring your own AI
 
@@ -157,8 +162,8 @@ Bump `MARKETING_VERSION`/`CFBundleShortVersionString` in `project.yml` if needed
 matching tag:
 
 ```sh
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 `.github/workflows/release.yml` builds the DMG and publishes it to
@@ -180,10 +185,17 @@ A few things worth knowing if you're reading the code or hitting an edge case:
 - **Custom Command safety**: external processes run with concurrent stdout/stderr draining (no
   deadlock on large output), a hard timeout, and cancellation support — a stuck or misbehaving
   CLI can't hang the app.
-- **Read-only detection**: AX can confirm a selection isn't writable (e.g. `kAXSelectedTextAttribute`
-  not settable) — that's a hard signal, shown as a result popup instead of a paste attempt. When
-  AX gives no signal at all, a role-based heuristic (`AXTextField`/`AXTextArea`/`AXComboBox` = probably
-  editable) decides, defaulting to the popup when uncertain.
+- **Read-only detection**: when Accessibility can confirm a selection isn't writable, or when it
+  gives no usable signal at all, Reword defaults to the read-only popup rather than risking a
+  paste in the wrong place — a role-based heuristic (`AXTextField`/`AXTextArea`/`AXComboBox` =
+  probably editable) covers the "no signal" case. Even a direct write that AX claims succeeded is
+  double-checked afterward, since some Chromium-based apps report success without actually
+  applying the change — Reword falls back to a real paste when that happens.
+- **Cross-toolkit accessibility quirks, handled**: Chromium (Electron apps like Slack) and
+  Firefox often expose only a stub accessibility tree — the "focused element" resolves to the
+  whole window — until something signals that assistive tech is present. Reword nudges this
+  (an activation attribute for Chromium, a short retry with backoff for Firefox's slower-to-init
+  Gecko engine) before giving up and falling back to the pasteboard.
 
 ## 📄 License
 
